@@ -1,3 +1,3 @@
 # LANspy
-MFC project 
-..in development..
+MFC project <br>
+...in development.
