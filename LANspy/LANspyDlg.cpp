@@ -48,6 +48,7 @@ CLANspyDlg::CLANspyDlg(CWnd* pParent /*=NULL*/)
 void CLANspyDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST1, listCtrlView);
 }
 
 BEGIN_MESSAGE_MAP(CLANspyDlg, CDialogEx)
@@ -90,6 +91,9 @@ BOOL CLANspyDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	listCtrlView.InsertColumn(0, _T("IPaddress"), LVCFMT_LEFT, 100);
+	listCtrlView.InsertColumn(1, _T("Hostname"), LVCFMT_LEFT, 100);
+	listCtrlView.InsertColumn(2, _T("MACaddress"), LVCFMT_LEFT, 100);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -144,8 +148,10 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 }
 
 
-
+//Events
 void CLANspyDlg::OnBnClickedOk()
 {
+	ViewModelLogic viewModelLogic;
 
+	viewModelLogic.Search(listCtrlView);
 }

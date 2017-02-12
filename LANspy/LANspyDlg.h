@@ -1,6 +1,7 @@
 // LANspyDlg.h : header file
 
 #pragma once
+#include "afxcmn.h"
 
 
 // CLANspyDlg dialog
@@ -31,4 +32,5 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	afx_msg void OnBnClickedOk();
+	CListCtrl listCtrlView;
 };
