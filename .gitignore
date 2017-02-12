@@ -1,0 +1,9 @@
+.vs/
+Debug/
+LANspy.VC.db
+LANspy.sln
+LANspy/Debug/
+LANspy/x64/
+ipch/
+x64/
+*.opendb

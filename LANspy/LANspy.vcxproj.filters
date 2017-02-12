@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{731ab074-e749-4dc2-9059-3c63445663fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="View">
+      <UniqueIdentifier>{721a3112-91bc-4bb9-a42a-1b8184a1cdc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logic">
+      <UniqueIdentifier>{2e821101-9a09-4838-b4c1-5c69babe3f81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainApp">
+      <UniqueIdentifier>{869745b4-ffb6-4781-82df-fe5363fd8c03}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="LANspy.h">
+      <Filter>MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="LANspyDlg.h">
+      <Filter>View</Filter>
+    </ClInclude>
+    <ClInclude Include="IPaddresses.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="LANspy.cpp">
+      <Filter>MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="LANspyDlg.cpp">
+      <Filter>View</Filter>
+    </ClCompile>
+    <ClCompile Include="IPaddresses.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LANspy.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\LANspy.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\LANspy.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
