@@ -37,6 +37,9 @@
     <ClInclude Include="IPaddresses.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="ViewModelLogic.h">
+      <Filter>Logic</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LANspy.cpp">
@@ -50,6 +53,9 @@
     </ClCompile>
     <ClCompile Include="IPaddresses.cpp">
       <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModelLogic.cpp">
+      <Filter>Logic</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

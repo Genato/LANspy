@@ -38,6 +38,7 @@
 #include "LANspy.h"
 #include "LANspyDlg.h"
 #include "IPaddresses.h"
+#include "ViewModelLogic.h"
 #include "resource.h"		// main symbols
 
 
