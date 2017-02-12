@@ -1,6 +1,4 @@
-
 // LANspyDlg.h : header file
-//
 
 #pragma once
 

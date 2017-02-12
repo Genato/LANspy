@@ -18,6 +18,7 @@
 
 #include <afxwin.h>         // MFC core and standard components
 #include <afxext.h>         // MFC extensions
+#include "afxdialogex.h"
 
 
 #include <afxdisp.h>        // MFC Automation classes
@@ -34,12 +35,20 @@
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 #include <afxdb.h>
 
+#include "LANspy.h"
+#include "LANspyDlg.h"
+#include "IPaddresses.h"
+#include "resource.h"		// main symbols
 
 
 
+#ifndef __AFXWIN_H__
+#error "include 'stdafx.h' before including this file for PCH"
+#endif
 
-
-
+#ifdef _DEBUG
+#define new DEBUG_NEW
+#endif
 
 
 #ifdef _UNICODE

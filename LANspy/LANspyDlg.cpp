@@ -1,16 +1,6 @@
-
 // LANspyDlg.cpp : implementation file
-//
 
 #include "stdafx.h"
-#include "LANspy.h"
-#include "LANspyDlg.h"
-#include "afxdialogex.h"
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-
 
 // CAboutDlg dialog used for App About
 

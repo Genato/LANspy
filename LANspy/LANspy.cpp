@@ -1,15 +1,6 @@
-
 // LANspy.cpp : Defines the class behaviors for the application.
-//
 
 #include "stdafx.h"
-#include "LANspy.h"
-#include "LANspyDlg.h"
-
-#ifdef _DEBUG
-#define new DEBUG_NEW
-#endif
-
 
 // CLANspyApp
 
