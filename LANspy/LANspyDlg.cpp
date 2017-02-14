@@ -40,7 +40,9 @@ END_MESSAGE_MAP()
 
 
 CLANspyDlg::CLANspyDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_LANSPY_DIALOG, pParent)
+	: CDialogEx(IDD_LANSPY_DIALOG, pParent), 
+	save(false),
+	load(false)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -56,6 +58,8 @@ BEGIN_MESSAGE_MAP(CLANspyDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDOK, &CLANspyDlg::OnBnClickedOk)
+	ON_COMMAND(ID_SAVE, &CLANspyDlg::OnSave)
+	ON_COMMAND(ID_LOAD, &CLANspyDlg::OnLoad)
 END_MESSAGE_MAP()
 
 
@@ -147,11 +151,36 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
 //Events
 void CLANspyDlg::OnBnClickedOk()
 {
 	ViewModelLogic viewModelLogic;
 
 	viewModelLogic.Search(listCtrlView);
+}
+
+void CLANspyDlg::OnSave()
+{
+	CMenu* cMenu = this->GetMenu();
+	
+	save = !save;
+	cMenu->CheckMenuItem(ID_SAVE, save ? MF_CHECKED : MF_UNCHECKED);
+	if (cMenu->GetMenuState(ID_LOAD, 1) == MF_CHECKED)
+	{
+		cMenu->CheckMenuItem(ID_LOAD, MF_UNCHECKED);
+		load = !load;
+	}
+}
+
+void CLANspyDlg::OnLoad()
+{
+	CMenu* cMenu = this->GetMenu();
+
+	load = !load;
+	cMenu->CheckMenuItem(ID_LOAD, load ? MF_CHECKED : MF_UNCHECKED);
+	if (cMenu->GetMenuState(ID_SAVE, 0) == MF_CHECKED)
+	{
+		cMenu->CheckMenuItem(ID_SAVE, MF_UNCHECKED);
+		save = !save;
+	}
 }

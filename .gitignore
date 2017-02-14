@@ -7,3 +7,4 @@ LANspy/x64/
 ipch/
 x64/
 *.opendb
+*.cd
