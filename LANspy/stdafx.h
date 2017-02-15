@@ -40,6 +40,7 @@
 #include "IPaddresses.h"
 #include "ViewModelLogic.h"
 #include "resource.h"		// main symbols
+#include <array>
 
 
 

@@ -5,6 +5,7 @@ class ViewModelLogic
 {
 public:
 	CLANspyDlg* cLANspyDlg;
+	CIPaddresses* IPaddress;
 
 	ViewModelLogic();
 	~ViewModelLogic();

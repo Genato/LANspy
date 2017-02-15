@@ -4,6 +4,7 @@ LANspy.VC.db
 LANspy.sln
 LANspy/Debug/
 LANspy/x64/
+LANspy/*.aps
 ipch/
 x64/
 *.opendb

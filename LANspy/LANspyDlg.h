@@ -3,6 +3,7 @@
 #pragma once
 #include "afxcmn.h"
 
+typedef bool* BoolArray[4];
 
 // CLANspyDlg dialog
 class CLANspyDlg : public CDialogEx
@@ -10,6 +11,8 @@ class CLANspyDlg : public CDialogEx
 // Construction
 public:
 	CLANspyDlg(CWnd* pParent = NULL);	// standard constructor
+
+	enum { SAVE, LOAD, THISPC = 0, SUBNET, RANGE };
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -34,7 +37,11 @@ public:
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnSave();
 	afx_msg void OnLoad();
+	afx_msg void ThisPcInfo();
+	afx_msg void RangeOfIpAddr();
+	afx_msg void ThisPcSubnet();
+	void CheckUncheckItem(int checkItemId, bool& check, int unCheckItemId[], BoolArray& unChecked, int itemMenuNum[]);
 
 	CListCtrl listCtrlView;
-	bool save, load;
+	bool save, load, thisPcInfo, thisPcSubnet, rangeOfIpAddr;
 };

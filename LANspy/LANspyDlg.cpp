@@ -42,7 +42,10 @@ END_MESSAGE_MAP()
 CLANspyDlg::CLANspyDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_LANSPY_DIALOG, pParent), 
 	save(false),
-	load(false)
+	load(false),
+	thisPcInfo(false), 
+	thisPcSubnet(false), 
+	rangeOfIpAddr(false)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -60,6 +63,9 @@ BEGIN_MESSAGE_MAP(CLANspyDlg, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CLANspyDlg::OnBnClickedOk)
 	ON_COMMAND(ID_SAVE, &CLANspyDlg::OnSave)
 	ON_COMMAND(ID_LOAD, &CLANspyDlg::OnLoad)
+	ON_COMMAND(ID_OPTIONS_THISPCINFO, &CLANspyDlg::ThisPcInfo)
+	ON_COMMAND(ID_OPTIONS_RANGEOFIPADDRESSES, &CLANspyDlg::RangeOfIpAddr)
+	ON_COMMAND(ID_OPTIONS_THISPCSUBNET, &CLANspyDlg::ThisPcSubnet)
 END_MESSAGE_MAP()
 
 
@@ -151,7 +157,7 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-//Events
+//Custom Events
 void CLANspyDlg::OnBnClickedOk()
 {
 	ViewModelLogic viewModelLogic;
@@ -163,24 +169,86 @@ void CLANspyDlg::OnSave()
 {
 	CMenu* cMenu = this->GetMenu();
 	
-	save = !save;
-	cMenu->CheckMenuItem(ID_SAVE, save ? MF_CHECKED : MF_UNCHECKED);
-	if (cMenu->GetMenuState(ID_LOAD, 1) == MF_CHECKED)
-	{
-		cMenu->CheckMenuItem(ID_LOAD, MF_UNCHECKED);
-		load = !load;
-	}
+	//
+	//save = !save;
+	//cMenu->CheckMenuItem(ID_SAVE, save ? MF_CHECKED : MF_UNCHECKED);
+	//if (cMenu->GetMenuState(ID_LOAD, 1) == MF_CHECKED)
+	//{
+	//	cMenu->CheckMenuItem(ID_LOAD, MF_UNCHECKED);
+	//	load = !load;
+	//}s
+
+	int unCheckItemId[] = { ID_LOAD, ID_OPTIONS_THISPCINFO, ID_OPTIONS_THISPCSUBNET, ID_OPTIONS_RANGEOFIPADDRESSES };
+	BoolArray unChecked = { &load, &thisPcInfo, &thisPcSubnet, &rangeOfIpAddr };
+	int itemMenuNum[] = {LOAD, THISPC, SUBNET, RANGE};
+
+	CheckUncheckItem(ID_SAVE, save, unCheckItemId, unChecked, itemMenuNum);
 }
 
 void CLANspyDlg::OnLoad()
 {
+	//CMenu* cMenu = this->GetMenu();
+
+	//load = !load;
+	//cMenu->CheckMenuItem(ID_LOAD, load ? MF_CHECKED : MF_UNCHECKED);
+	//if (cMenu->GetMenuState(ID_SAVE, 0) == MF_CHECKED)
+	//{
+	//	cMenu->CheckMenuItem(ID_SAVE, MF_UNCHECKED);
+	//	save = !save;
+	//}		
+
+	int unCheckItemId[] = { ID_SAVE, ID_OPTIONS_THISPCINFO, ID_OPTIONS_THISPCSUBNET, ID_OPTIONS_RANGEOFIPADDRESSES };
+	BoolArray unChecked = { &save, &thisPcInfo, &thisPcSubnet, &rangeOfIpAddr };
+	int itemMenuNum[] = { SAVE, THISPC, SUBNET, RANGE };
+
+	CheckUncheckItem(ID_LOAD, load, unCheckItemId, unChecked, itemMenuNum);
+}
+
+void CLANspyDlg::ThisPcInfo()
+{
+	int unCheckItemId[] = { ID_SAVE, ID_LOAD, ID_OPTIONS_THISPCSUBNET, ID_OPTIONS_RANGEOFIPADDRESSES };
+	BoolArray unChecked = { &save, &load, &thisPcSubnet, &rangeOfIpAddr };
+	int itemMenuNum[] = { SAVE, LOAD, SUBNET, RANGE };
+
+	CheckUncheckItem(ID_OPTIONS_THISPCINFO, thisPcInfo, unCheckItemId, unChecked, itemMenuNum);
+}
+
+
+void CLANspyDlg::ThisPcSubnet()
+{
+	int unCheckItemId[] = { ID_SAVE, ID_LOAD, ID_OPTIONS_THISPCINFO, ID_OPTIONS_RANGEOFIPADDRESSES };
+	BoolArray unChecked = { &save, &load, &thisPcInfo, &rangeOfIpAddr };
+	int itemMenuNum[] = { SAVE, LOAD, THISPC, RANGE };
+
+	std::array<bool, 4> unCheck = { save, load, thisPcInfo, thisPcSubnet };
+
+	CheckUncheckItem(ID_OPTIONS_THISPCSUBNET, thisPcSubnet, unCheckItemId, unChecked, itemMenuNum);
+}
+
+void CLANspyDlg::RangeOfIpAddr()
+{
+	int unCheckItemId[] = { ID_SAVE, ID_LOAD, ID_OPTIONS_THISPCINFO, ID_OPTIONS_THISPCSUBNET };
+	BoolArray unChecked = { &save, &load, &thisPcInfo, &thisPcSubnet };
+	int itemMenuNum[] = { SAVE, LOAD, THISPC, SUBNET };
+	
+	CheckUncheckItem(ID_OPTIONS_RANGEOFIPADDRESSES, rangeOfIpAddr, unCheckItemId, unChecked, itemMenuNum);
+}
+
+
+//Helper methods
+void CLANspyDlg::CheckUncheckItem(int checkItemId, bool& check, int unCheckItemId[], BoolArray& unChecked, int itemMenuNum[])
+{
 	CMenu* cMenu = this->GetMenu();
 
-	load = !load;
-	cMenu->CheckMenuItem(ID_LOAD, load ? MF_CHECKED : MF_UNCHECKED);
-	if (cMenu->GetMenuState(ID_SAVE, 0) == MF_CHECKED)
+	check = !check;
+	cMenu->CheckMenuItem(checkItemId, check ? MF_CHECKED : MF_UNCHECKED);
+
+	for (int i = 0; i < sizeof(unChecked)/sizeof(unChecked[0]); ++i)
 	{
-		cMenu->CheckMenuItem(ID_SAVE, MF_UNCHECKED);
-		save = !save;
+		if (cMenu->GetMenuState(unCheckItemId[i], itemMenuNum[i]) == MF_CHECKED)
+		{
+			cMenu->CheckMenuItem(unCheckItemId[i], MF_UNCHECKED);
+			*unChecked[i] = (!*unChecked[i]);
+		}
 	}
 }
