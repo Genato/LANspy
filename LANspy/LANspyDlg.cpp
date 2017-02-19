@@ -158,6 +158,7 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 }
 
 //Custom Events
+
 void CLANspyDlg::OnBnClickedOk()
 {
 	ViewModelLogic viewModelLogic;
@@ -213,6 +214,7 @@ void CLANspyDlg::RangeOfIpAddr()
 
 
 //Helper methods
+
 void CLANspyDlg::CheckUncheckItem(int checkItemId, bool& check, int unCheckItemId[], BoolArray& unChecked, int itemMenuNum[])
 {
 	CMenu* cMenu = this->GetMenu();
