@@ -167,16 +167,6 @@ void CLANspyDlg::OnBnClickedOk()
 
 void CLANspyDlg::OnSave()
 {
-	//CMenu* cMenu = this->GetMenu();
-	
-	//save = !save;
-	//cMenu->CheckMenuItem(ID_SAVE, save ? MF_CHECKED : MF_UNCHECKED);
-	//if (cMenu->GetMenuState(ID_LOAD, 1) == MF_CHECKED)
-	//{
-	//	cMenu->CheckMenuItem(ID_LOAD, MF_UNCHECKED);
-	//	load = !load;
-	//}s
-
 	int unCheckItemId[] = { ID_LOAD, ID_OPTIONS_THISPCINFO, ID_OPTIONS_THISPCSUBNET, ID_OPTIONS_RANGEOFIPADDRESSES };
 	BoolArray unChecked = { &load, &thisPcInfo, &thisPcSubnet, &rangeOfIpAddr };
 	int itemMenuNum[] = {LOAD, THISPC, SUBNET, RANGE};
@@ -186,16 +176,6 @@ void CLANspyDlg::OnSave()
 
 void CLANspyDlg::OnLoad()
 {
-	//CMenu* cMenu = this->GetMenu();
-
-	//load = !load;
-	//cMenu->CheckMenuItem(ID_LOAD, load ? MF_CHECKED : MF_UNCHECKED);
-	//if (cMenu->GetMenuState(ID_SAVE, 0) == MF_CHECKED)
-	//{
-	//	cMenu->CheckMenuItem(ID_SAVE, MF_UNCHECKED);
-	//	save = !save;
-	//}		
-
 	int unCheckItemId[] = { ID_SAVE, ID_OPTIONS_THISPCINFO, ID_OPTIONS_THISPCSUBNET, ID_OPTIONS_RANGEOFIPADDRESSES };
 	BoolArray unChecked = { &save, &thisPcInfo, &thisPcSubnet, &rangeOfIpAddr };
 	int itemMenuNum[] = { SAVE, THISPC, SUBNET, RANGE };
@@ -249,3 +229,14 @@ void CLANspyDlg::CheckUncheckItem(int checkItemId, bool& check, int unCheckItemI
 		}
 	}
 }
+
+
+//CMenu* cMenu = this->GetMenu();
+
+//save = !save;
+//cMenu->CheckMenuItem(ID_SAVE, save ? MF_CHECKED : MF_UNCHECKED);
+//if (cMenu->GetMenuState(ID_LOAD, 1) == MF_CHECKED)
+//{
+//	cMenu->CheckMenuItem(ID_LOAD, MF_UNCHECKED);
+//	load = !load;
+//}s
