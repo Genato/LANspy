@@ -167,9 +167,8 @@ void CLANspyDlg::OnBnClickedOk()
 
 void CLANspyDlg::OnSave()
 {
-	CMenu* cMenu = this->GetMenu();
+	//CMenu* cMenu = this->GetMenu();
 	
-	//
 	//save = !save;
 	//cMenu->CheckMenuItem(ID_SAVE, save ? MF_CHECKED : MF_UNCHECKED);
 	//if (cMenu->GetMenuState(ID_LOAD, 1) == MF_CHECKED)
@@ -219,8 +218,6 @@ void CLANspyDlg::ThisPcSubnet()
 	int unCheckItemId[] = { ID_SAVE, ID_LOAD, ID_OPTIONS_THISPCINFO, ID_OPTIONS_RANGEOFIPADDRESSES };
 	BoolArray unChecked = { &save, &load, &thisPcInfo, &rangeOfIpAddr };
 	int itemMenuNum[] = { SAVE, LOAD, THISPC, RANGE };
-
-	std::array<bool, 4> unCheck = { save, load, thisPcInfo, thisPcSubnet };
 
 	CheckUncheckItem(ID_OPTIONS_THISPCSUBNET, thisPcSubnet, unCheckItemId, unChecked, itemMenuNum);
 }
