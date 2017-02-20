@@ -41,6 +41,7 @@ public:
 	afx_msg void RangeOfIpAddr();
 	afx_msg void ThisPcSubnet();
 	void CheckUncheckItem(int checkItemId, bool& check, int unCheckItemId[], BoolArray& unChecked, int itemMenuNum[]);
+	void EnableDisableDlgItem(int btnID, LPCTSTR btnText, int ipCntrlID1, int ipCntrl1, int ipCntrlID2, int ipCntrl2);
 
 	CListCtrl listCtrlView;
 	bool save, load, thisPcInfo, thisPcSubnet, rangeOfIpAddr;

@@ -174,6 +174,7 @@ void CLANspyDlg::OnSave()
 	int itemMenuNum[] = {LOAD, THISPC, SUBNET, RANGE};
 
 	CheckUncheckItem(ID_SAVE, save, unCheckItemId, unChecked, itemMenuNum);
+	EnableDisableDlgItem(IDOK, L"Save", IDC_IPADDRESS1, 0, IDC_IPADDRESS2, 0);
 }
 
 void CLANspyDlg::OnLoad()
@@ -183,6 +184,7 @@ void CLANspyDlg::OnLoad()
 	int itemMenuNum[] = { SAVE, THISPC, SUBNET, RANGE };
 
 	CheckUncheckItem(ID_LOAD, load, unCheckItemId, unChecked, itemMenuNum);
+	EnableDisableDlgItem(IDOK, L"Load", IDC_IPADDRESS1, 0, IDC_IPADDRESS2, 0);
 }
 
 void CLANspyDlg::ThisPcInfo()
@@ -192,6 +194,7 @@ void CLANspyDlg::ThisPcInfo()
 	int itemMenuNum[] = { SAVE, LOAD, SUBNET, RANGE };
 
 	CheckUncheckItem(ID_OPTIONS_THISPCINFO, thisPcInfo, unCheckItemId, unChecked, itemMenuNum);
+	EnableDisableDlgItem(IDOK, L"ThisPcInfo", IDC_IPADDRESS1, 0, IDC_IPADDRESS2, 0);
 }
 
 
@@ -202,6 +205,7 @@ void CLANspyDlg::ThisPcSubnet()
 	int itemMenuNum[] = { SAVE, LOAD, THISPC, RANGE };
 
 	CheckUncheckItem(ID_OPTIONS_THISPCSUBNET, thisPcSubnet, unCheckItemId, unChecked, itemMenuNum);
+	EnableDisableDlgItem(IDOK, L"ThisPcSubnet", IDC_IPADDRESS1, 0, IDC_IPADDRESS2, 0);
 }
 
 void CLANspyDlg::RangeOfIpAddr()
@@ -211,6 +215,7 @@ void CLANspyDlg::RangeOfIpAddr()
 	int itemMenuNum[] = { SAVE, LOAD, THISPC, SUBNET };
 	
 	CheckUncheckItem(ID_OPTIONS_RANGEOFIPADDRESSES, rangeOfIpAddr, unCheckItemId, unChecked, itemMenuNum);
+	EnableDisableDlgItem(IDOK, L"RangeOfIpAddr", IDC_IPADDRESS1, 1, IDC_IPADDRESS2, 1);
 }
 
 //
@@ -231,6 +236,17 @@ void CLANspyDlg::CheckUncheckItem(int checkItemId, bool& check, int unCheckItemI
 			*unChecked[i] = (!*unChecked[i]);
 		}
 	}
+}
+
+void CLANspyDlg::EnableDisableDlgItem(int btnID, LPCTSTR btnText, int ipCntrlID1, int ipCntrl1, int ipCntrlID2, int ipCntrl2)
+{
+	CWnd* pButton = GetDlgItem(btnID);
+	CWnd* iPCntrl1 = GetDlgItem(ipCntrlID1);
+	CWnd* iPCntrl2 = GetDlgItem(ipCntrlID2);
+
+	pButton->SetWindowTextW(btnText);
+	iPCntrl1->EnableWindow(ipCntrl1);
+	iPCntrl2->EnableWindow(ipCntrl2);
 }
 
 
