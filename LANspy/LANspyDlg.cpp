@@ -45,7 +45,8 @@ CLANspyDlg::CLANspyDlg(CWnd* pParent /*=NULL*/)
 	load(false),
 	thisPcInfo(false), 
 	thisPcSubnet(false), 
-	rangeOfIpAddr(false)
+	rangeOfIpAddr(false),
+	itemID(0)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -157,6 +158,7 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
 //
 //Custom Events
 //
@@ -164,7 +166,22 @@ void CLANspyDlg::OnBnClickedOk()
 {
 	ViewModelLogic viewModelLogic;
 
-	viewModelLogic.Search(listCtrlView);
+	switch (itemID)
+	{
+	case ID_SAVE:
+		break;
+	case ID_LOAD:
+		viewModelLogic.Load(listCtrlView);
+		break;
+	case ID_OPTIONS_RANGEOFIPADDRESSES:
+		break;
+	case ID_OPTIONS_THISPCINFO:
+		break;
+	case ID_OPTIONS_THISPCSUBNET:
+		break;
+	default:
+		break;
+	}
 }
 
 void CLANspyDlg::OnSave()
@@ -173,6 +190,7 @@ void CLANspyDlg::OnSave()
 	BoolArray unChecked = { &load, &thisPcInfo, &thisPcSubnet, &rangeOfIpAddr };
 	int itemMenuNum[] = {LOAD, THISPC, SUBNET, RANGE};
 
+	itemID = ID_SAVE;
 	CheckUncheckItem(ID_SAVE, save, unCheckItemId, unChecked, itemMenuNum);
 	EnableDisableDlgItem(IDOK, L"Save", IDC_IPADDRESS1, 0, IDC_IPADDRESS2, 0);
 }
@@ -183,6 +201,7 @@ void CLANspyDlg::OnLoad()
 	BoolArray unChecked = { &save, &thisPcInfo, &thisPcSubnet, &rangeOfIpAddr };
 	int itemMenuNum[] = { SAVE, THISPC, SUBNET, RANGE };
 
+	itemID = ID_LOAD;
 	CheckUncheckItem(ID_LOAD, load, unCheckItemId, unChecked, itemMenuNum);
 	EnableDisableDlgItem(IDOK, L"Load", IDC_IPADDRESS1, 0, IDC_IPADDRESS2, 0);
 }
@@ -193,6 +212,7 @@ void CLANspyDlg::ThisPcInfo()
 	BoolArray unChecked = { &save, &load, &thisPcSubnet, &rangeOfIpAddr };
 	int itemMenuNum[] = { SAVE, LOAD, SUBNET, RANGE };
 
+	itemID = ID_OPTIONS_THISPCINFO;
 	CheckUncheckItem(ID_OPTIONS_THISPCINFO, thisPcInfo, unCheckItemId, unChecked, itemMenuNum);
 	EnableDisableDlgItem(IDOK, L"ThisPcInfo", IDC_IPADDRESS1, 0, IDC_IPADDRESS2, 0);
 }
@@ -204,6 +224,7 @@ void CLANspyDlg::ThisPcSubnet()
 	BoolArray unChecked = { &save, &load, &thisPcInfo, &rangeOfIpAddr };
 	int itemMenuNum[] = { SAVE, LOAD, THISPC, RANGE };
 
+	itemID = ID_OPTIONS_THISPCSUBNET;
 	CheckUncheckItem(ID_OPTIONS_THISPCSUBNET, thisPcSubnet, unCheckItemId, unChecked, itemMenuNum);
 	EnableDisableDlgItem(IDOK, L"ThisPcSubnet", IDC_IPADDRESS1, 0, IDC_IPADDRESS2, 0);
 }
@@ -214,6 +235,7 @@ void CLANspyDlg::RangeOfIpAddr()
 	BoolArray unChecked = { &save, &load, &thisPcInfo, &thisPcSubnet };
 	int itemMenuNum[] = { SAVE, LOAD, THISPC, SUBNET };
 	
+	itemID = ID_OPTIONS_RANGEOFIPADDRESSES;
 	CheckUncheckItem(ID_OPTIONS_RANGEOFIPADDRESSES, rangeOfIpAddr, unCheckItemId, unChecked, itemMenuNum);
 	EnableDisableDlgItem(IDOK, L"RangeOfIpAddr", IDC_IPADDRESS1, 1, IDC_IPADDRESS2, 1);
 }
@@ -244,6 +266,7 @@ void CLANspyDlg::EnableDisableDlgItem(int btnID, LPCTSTR btnText, int ipCntrlID1
 	CWnd* iPCntrl1 = GetDlgItem(ipCntrlID1);
 	CWnd* iPCntrl2 = GetDlgItem(ipCntrlID2);
 
+	pButton->EnableWindow(1);
 	pButton->SetWindowTextW(btnText);
 	iPCntrl1->EnableWindow(ipCntrl1);
 	iPCntrl2->EnableWindow(ipCntrl2);

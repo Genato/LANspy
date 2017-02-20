@@ -8,7 +8,7 @@ ViewModelLogic::~ViewModelLogic()
 	delete IPaddress;
 }
 
-void ViewModelLogic::Search(CListCtrl& listCtrlView) 
+void ViewModelLogic::Load(CListCtrl& listCtrlView) 
 {
 	IPaddress->Open(CRecordset::dynamic, NULL, CRecordset::readOnly);
 

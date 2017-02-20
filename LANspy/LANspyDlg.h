@@ -45,4 +45,5 @@ public:
 
 	CListCtrl listCtrlView;
 	bool save, load, thisPcInfo, thisPcSubnet, rangeOfIpAddr;
+	int itemID;
 };

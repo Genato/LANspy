@@ -10,7 +10,7 @@ public:
 	ViewModelLogic();
 	~ViewModelLogic();
 
-	void Search(CListCtrl& listCtrlView);
+	void Load(CListCtrl& listCtrlView);
 
 };
 
