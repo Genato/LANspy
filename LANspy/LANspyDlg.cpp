@@ -167,12 +167,24 @@ void CLANspyDlg::OnBnClickedOk()
 {
 	if (IsDlgButtonChecked(IDC_THISPCINFO) == BST_CHECKED)
 	{
+		viewModelLogic.Search(L"ThisPcInfo");
 	}
 	else if (IsDlgButtonChecked(IDC_THISPCSUBNET) == BST_CHECKED)
 	{
+		viewModelLogic.Search(L"ThisPcSubnet");
 	}
 	else if (IsDlgButtonChecked(IDC_RANGEOFIPADDR) == BST_CHECKED)
 	{
+		CIPAddressCtrl* cIpCntrl;
+		DWORD startDwAddress;
+		DWORD endDwAddress;
+
+		cIpCntrl = (CIPAddressCtrl*)(GetDlgItem(IDC_IPADDRESS1));
+		cIpCntrl->GetAddress(startDwAddress);
+		cIpCntrl = (CIPAddressCtrl*)(GetDlgItem(IDC_IPADDRESS2));
+		cIpCntrl->GetAddress(endDwAddress);
+
+		viewModelLogic.Search(L"RangeOfIpAddr", startDwAddress, endDwAddress);
 	}
 	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
 	{

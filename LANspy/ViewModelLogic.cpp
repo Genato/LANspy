@@ -28,3 +28,13 @@ void ViewModelLogic::Save()
 {
 
 }
+
+void ViewModelLogic::Search(CString option)
+{
+
+}
+
+void ViewModelLogic::Search(CString option, DWORD startDwAddress, DWORD endDwAddress)
+{
+
+}
