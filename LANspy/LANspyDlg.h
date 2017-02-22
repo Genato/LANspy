@@ -1,13 +1,16 @@
 // LANspyDlg.h : header file
 
 #pragma once
-#include "afxcmn.h"
+//#include "afxcmn.h"
 
 // CLANspyDlg dialog
 class CLANspyDlg : public CDialogEx
 {
 // Construction
 public:
+	CListCtrl listCtrlView;
+	ViewModelLogic viewModelLogic;
+
 	CLANspyDlg(CWnd* pParent = NULL);	// standard constructor
 
 // Dialog Data
@@ -32,6 +35,4 @@ protected:
 public:
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnRadioBtnChange();
-
-	CListCtrl listCtrlView;
 };

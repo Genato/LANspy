@@ -158,7 +158,6 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
 //
 //Custom Events
 //
@@ -166,8 +165,6 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 //Function that calls ViewModelLogic to performe some logic based on options that user choose
 void CLANspyDlg::OnBnClickedOk()
 {
-	ViewModelLogic viewModelLogic;
-
 	if (IsDlgButtonChecked(IDC_THISPCINFO) == BST_CHECKED)
 	{
 	}
@@ -179,6 +176,7 @@ void CLANspyDlg::OnBnClickedOk()
 	}
 	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
 	{
+		viewModelLogic.Save();
 	}
 	else if (IsDlgButtonChecked(IDC_LOAD) == BST_CHECKED)
 	{
@@ -227,13 +225,3 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 		cWnd->SetWindowTextW(L"Load");
 	}
 }
-
-//CMenu* cMenu = this->GetMenu();
-
-//save = !save;
-//cMenu->CheckMenuItem(ID_SAVE, save ? MF_CHECKED : MF_UNCHECKED);
-//if (cMenu->GetMenuState(ID_LOAD, 1) == MF_CHECKED)
-//{
-//	cMenu->CheckMenuItem(ID_LOAD, MF_UNCHECKED);
-//	load = !load;
-//}s

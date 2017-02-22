@@ -23,3 +23,8 @@ void ViewModelLogic::Load(CListCtrl& listCtrlView)
 		IPaddress->MoveNext();
 	}
 }
+
+void ViewModelLogic::Save()
+{
+
+}

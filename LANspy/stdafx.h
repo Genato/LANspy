@@ -36,12 +36,10 @@
 #include <afxdb.h>
 
 #include "LANspy.h"
-#include "LANspyDlg.h"
 #include "IPaddresses.h"
-#include "ViewModelLogic.h"
 #include "resource.h"		// main symbols
-#include <array>
-
+#include "ViewModelLogic.h"
+#include "LANspyDlg.h"
 
 
 #ifndef __AFXWIN_H__
