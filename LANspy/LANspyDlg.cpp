@@ -56,6 +56,11 @@ BEGIN_MESSAGE_MAP(CLANspyDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_BN_CLICKED(IDOK, &CLANspyDlg::OnBnClickedOk)
+	ON_COMMAND(IDC_THISPCINFO, &CLANspyDlg::OnRadioBtnChange)
+	ON_COMMAND(IDC_THISPCSUBNET, &CLANspyDlg::OnRadioBtnChange)
+	ON_COMMAND(IDC_RANGEOFIPADDR, &CLANspyDlg::OnRadioBtnChange)
+	ON_COMMAND(IDC_SAVE, &CLANspyDlg::OnRadioBtnChange)
+	ON_COMMAND(IDC_LOAD, &CLANspyDlg::OnRadioBtnChange)
 END_MESSAGE_MAP()
 
 
@@ -99,7 +104,7 @@ BOOL CLANspyDlg::OnInitDialog()
 	listCtrlView.InsertColumn(1, _T("Hostname"), LVCFMT_LEFT, (lpRect.right - lpRect.left) / 3);
 	listCtrlView.InsertColumn(2, _T("MACaddress"), LVCFMT_LEFT, ((lpRect.right - lpRect.left) / 3) - 5);
 
-	CheckRadioButton(IDC_RADIO1, IDC_RADIO5, IDC_RADIO1);
+	CheckRadioButton(IDC_THISPCINFO, IDC_LOAD, IDC_THISPCINFO);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -157,11 +162,70 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 //
 //Custom Events
 //
+
+//Function that calls ViewModelLogic to performe some logic based on options that user choose
 void CLANspyDlg::OnBnClickedOk()
 {
 	ViewModelLogic viewModelLogic;
 
-	viewModelLogic.Load(listCtrlView);
+	if (IsDlgButtonChecked(IDC_THISPCINFO) == BST_CHECKED)
+	{
+	}
+	else if (IsDlgButtonChecked(IDC_THISPCSUBNET) == BST_CHECKED)
+	{
+	}
+	else if (IsDlgButtonChecked(IDC_RANGEOFIPADDR) == BST_CHECKED)
+	{
+	}
+	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
+	{
+	}
+	else if (IsDlgButtonChecked(IDC_LOAD) == BST_CHECKED)
+	{
+		viewModelLogic.Load(listCtrlView);
+	}
+
+}
+
+//Function that disable/enable controls
+afx_msg void CLANspyDlg::OnRadioBtnChange()
+{
+	CWnd* cWnd;
+
+	cWnd = GetDlgItem(IDC_IPADDRESS1);
+	cWnd->EnableWindow(0);
+	cWnd = GetDlgItem(IDC_IPADDRESS2);
+	cWnd->EnableWindow(0);
+
+	if (IsDlgButtonChecked(IDC_THISPCINFO) == BST_CHECKED)
+	{
+		cWnd = GetDlgItem(IDOK);
+		cWnd->SetWindowTextW(L"This PC info");
+	}
+	else if (IsDlgButtonChecked(IDC_THISPCSUBNET) == BST_CHECKED)
+	{
+		cWnd = GetDlgItem(IDOK);
+		cWnd->SetWindowTextW(L"This PC subnet");
+	}
+	else if (IsDlgButtonChecked(IDC_RANGEOFIPADDR) == BST_CHECKED)
+	{
+		cWnd = GetDlgItem(IDOK);
+		cWnd->SetWindowTextW(L"Range of IP addresses");
+		cWnd = GetDlgItem(IDC_IPADDRESS1);
+		cWnd->EnableWindow(1);
+		cWnd = GetDlgItem(IDC_IPADDRESS2);
+		cWnd->EnableWindow(1);
+	}
+	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
+	{
+		cWnd = GetDlgItem(IDOK);
+		cWnd->SetWindowTextW(L"Save");
+	}
+	else if (IsDlgButtonChecked(IDC_LOAD) == BST_CHECKED)
+	{
+		cWnd = GetDlgItem(IDOK);
+		cWnd->SetWindowTextW(L"Load");
+	}
 }
 
 //CMenu* cMenu = this->GetMenu();
