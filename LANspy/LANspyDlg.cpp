@@ -90,14 +90,16 @@ BOOL CLANspyDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
-	// TODO: Add extra initialization here
-	listCtrlView.InsertColumn(0, _T("IPaddress"), LVCFMT_LEFT, -1);
-	listCtrlView.InsertColumn(1, _T("Hostname"), LVCFMT_LEFT, -1);
-	listCtrlView.InsertColumn(2, _T("MACaddress"), LVCFMT_LEFT, -1);
-	listCtrlView.SetColumnWidth(2, LVSCW_AUTOSIZE_USEHEADER);
-	listCtrlView.SetColumnWidth(0, LVSCW_AUTOSIZE_USEHEADER);
-	listCtrlView.SetColumnWidth(1, LVSCW_AUTOSIZE_USEHEADER);
+	RECT lpRect;
 
+	listCtrlView.GetWindowRect(&lpRect);
+
+	// TODO: Add extra initialization here
+	listCtrlView.InsertColumn(0, _T("IPaddress"), LVCFMT_LEFT, (lpRect.right - lpRect.left) / 3);
+	listCtrlView.InsertColumn(1, _T("Hostname"), LVCFMT_LEFT, (lpRect.right - lpRect.left) / 3);
+	listCtrlView.InsertColumn(2, _T("MACaddress"), LVCFMT_LEFT, ((lpRect.right - lpRect.left) / 3) - 5);
+
+	CheckRadioButton(IDC_RADIO1, IDC_RADIO5, IDC_RADIO1);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
