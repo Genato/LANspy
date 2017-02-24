@@ -10,7 +10,10 @@ ViewModelLogic::~ViewModelLogic()
 
 void ViewModelLogic::Load(CListCtrl& listCtrlView) 
 {
-	IPaddress->Open(CRecordset::dynamic, NULL, CRecordset::readOnly);
+	if(!IPaddress->IsOpen())
+		IPaddress->Open(CRecordset::dynamic, NULL, CRecordset::readOnly);
+
+	listCtrlView.DeleteAllItems();
 
 	while(!IPaddress->IsEOF())
 	{
@@ -22,6 +25,8 @@ void ViewModelLogic::Load(CListCtrl& listCtrlView)
 
 		IPaddress->MoveNext();
 	}
+
+	IPaddress->Close();
 }
 
 void ViewModelLogic::Save()

@@ -184,7 +184,7 @@ void CLANspyDlg::OnBnClickedOk()
 	{
 		CString tmpStr;
 
-		if (tmpStr.LoadString(IDC_THISPCSUBNET))
+		if (!tmpStr.LoadString(IDC_THISPCSUBNET))
 			tmpStr = "";
 
 		viewModelLogic.Search(tmpStr);
@@ -201,7 +201,7 @@ void CLANspyDlg::OnBnClickedOk()
 		cIpCntrl = (CIPAddressCtrl*)(GetDlgItem(IDC_IPADDRESS2));
 		cIpCntrl->GetAddress(endDwAddress);
 
-		if (tmpStr.LoadString(IDC_RANGEOFIPADDR))
+		if (!tmpStr.LoadString(IDC_RANGEOFIPADDR))
 			tmpStr = "";
 
 		viewModelLogic.Search(tmpStr, startDwAddress, endDwAddress);
@@ -233,7 +233,7 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 		CString tmpStr;
 
 		cWnd = GetDlgItem(IDOK);
-		if(tmpStr.LoadString(IDC_THISPCINFO))
+		if(!tmpStr.LoadString(IDC_THISPCINFO))
 			tmpStr = "";
 
 		cWnd->SetWindowText(tmpStr);
@@ -244,7 +244,7 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 		CString tmpStr;
 
 		cWnd = GetDlgItem(IDOK);
-		if (tmpStr.LoadString(IDC_THISPCSUBNET))
+		if (!tmpStr.LoadString(IDC_THISPCSUBNET))
 			tmpStr = "";
 
 		cWnd->SetWindowText(tmpStr);
@@ -255,7 +255,7 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 		CString tmpStr;
 
 		cWnd = GetDlgItem(IDOK);
-		if (tmpStr.LoadString(IDC_RANGEOFIPADDR))
+		if (!tmpStr.LoadString(IDC_RANGEOFIPADDR))
 			tmpStr = "";
 
 		cWnd->SetWindowText(tmpStr);
@@ -270,7 +270,7 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 		CString tmpStr;
 
 		cWnd = GetDlgItem(IDOK);
-		if (tmpStr.LoadString(IDC_SAVE))
+		if (!tmpStr.LoadString(IDC_SAVE))
 			tmpStr = "";
 
 		cWnd->SetWindowText(tmpStr);
@@ -281,7 +281,7 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 		CString tmpStr;
 
 		cWnd = GetDlgItem(IDOK);
-		if (tmpStr.LoadString(IDC_LOAD))
+		if (!tmpStr.LoadString(IDC_LOAD))
 			tmpStr = "";
 
 		cWnd->SetWindowText(tmpStr);
