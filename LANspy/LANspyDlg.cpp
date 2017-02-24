@@ -175,15 +175,19 @@ void CLANspyDlg::OnBnClickedOk()
 	{
 		CString tmpStr;
 
-		if (tmpStr.LoadString(IDC_THISPCINFO))
-			viewModelLogic.Search(tmpStr);
+		if (!tmpStr.LoadString(IDC_THISPCINFO))
+			tmpStr = "";
+
+		viewModelLogic.Search(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_THISPCSUBNET) == BST_CHECKED)
 	{
 		CString tmpStr;
 
 		if (tmpStr.LoadString(IDC_THISPCSUBNET))
-			viewModelLogic.Search(tmpStr);
+			tmpStr = "";
+
+		viewModelLogic.Search(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_RANGEOFIPADDR) == BST_CHECKED)
 	{
@@ -198,7 +202,9 @@ void CLANspyDlg::OnBnClickedOk()
 		cIpCntrl->GetAddress(endDwAddress);
 
 		if (tmpStr.LoadString(IDC_RANGEOFIPADDR))
-			viewModelLogic.Search(tmpStr);
+			tmpStr = "";
+
+		viewModelLogic.Search(tmpStr, startDwAddress, endDwAddress);
 	}
 	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
 	{
@@ -228,7 +234,9 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 
 		cWnd = GetDlgItem(IDOK);
 		if(tmpStr.LoadString(IDC_THISPCINFO))
-			cWnd->SetWindowText(tmpStr);
+			tmpStr = "";
+
+		cWnd->SetWindowText(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_THISPCSUBNET) == BST_CHECKED)
 	{
@@ -237,7 +245,9 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 
 		cWnd = GetDlgItem(IDOK);
 		if (tmpStr.LoadString(IDC_THISPCSUBNET))
-			cWnd->SetWindowText(tmpStr);
+			tmpStr = "";
+
+		cWnd->SetWindowText(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_RANGEOFIPADDR) == BST_CHECKED)
 	{
@@ -246,7 +256,9 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 
 		cWnd = GetDlgItem(IDOK);
 		if (tmpStr.LoadString(IDC_RANGEOFIPADDR))
-			cWnd->SetWindowText(tmpStr);
+			tmpStr = "";
+
+		cWnd->SetWindowText(tmpStr);
 		cWnd = GetDlgItem(IDC_IPADDRESS1);
 		cWnd->EnableWindow(1);
 		cWnd = GetDlgItem(IDC_IPADDRESS2);
@@ -259,7 +271,9 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 
 		cWnd = GetDlgItem(IDOK);
 		if (tmpStr.LoadString(IDC_SAVE))
-			cWnd->SetWindowText(tmpStr);
+			tmpStr = "";
+
+		cWnd->SetWindowText(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_LOAD) == BST_CHECKED)
 	{
@@ -268,6 +282,8 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 
 		cWnd = GetDlgItem(IDOK);
 		if (tmpStr.LoadString(IDC_LOAD))
-			cWnd->SetWindowText(tmpStr);
+			tmpStr = "";
+
+		cWnd->SetWindowText(tmpStr);
 	}
 }
