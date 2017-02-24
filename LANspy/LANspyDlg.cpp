@@ -96,13 +96,19 @@ BOOL CLANspyDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	RECT lpRect;
+	CString ipAddr, hostName, macAddr;
 
 	listCtrlView.GetWindowRect(&lpRect);
 
-	// TODO: Add extra initialization here
-	listCtrlView.InsertColumn(0, _T("IPaddress"), LVCFMT_LEFT, (lpRect.right - lpRect.left) / 3);
-	listCtrlView.InsertColumn(1, _T("Hostname"), LVCFMT_LEFT, (lpRect.right - lpRect.left) / 3);
-	listCtrlView.InsertColumn(2, _T("MACaddress"), LVCFMT_LEFT, ((lpRect.right - lpRect.left) / 3) - 5);
+	if (!ipAddr.LoadString(LISTCNTRLIPADDR))
+		ipAddr = "";
+	listCtrlView.InsertColumn(0, ipAddr, LVCFMT_LEFT, (lpRect.right - lpRect.left) / 3);
+	if (!hostName.LoadString(LISTCNTRLIHOSTNAME))
+		hostName = "";
+	listCtrlView.InsertColumn(1, hostName, LVCFMT_LEFT, (lpRect.right - lpRect.left) / 3);
+	if (!macAddr.LoadString(LISTCNTRLIPADDRMACADDR))
+		macAddr = "";
+	listCtrlView.InsertColumn(2, macAddr, LVCFMT_LEFT, ((lpRect.right - lpRect.left) / 3) - 5);
 
 	CheckRadioButton(IDC_THISPCINFO, IDC_LOAD, IDC_THISPCINFO);
 
@@ -167,24 +173,32 @@ void CLANspyDlg::OnBnClickedOk()
 {
 	if (IsDlgButtonChecked(IDC_THISPCINFO) == BST_CHECKED)
 	{
-		viewModelLogic.Search(L"ThisPcInfo");
+		CString tmpStr;
+
+		if (tmpStr.LoadString(IDC_THISPCINFO))
+			viewModelLogic.Search(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_THISPCSUBNET) == BST_CHECKED)
 	{
-		viewModelLogic.Search(L"ThisPcSubnet");
+		CString tmpStr;
+
+		if (tmpStr.LoadString(IDC_THISPCSUBNET))
+			viewModelLogic.Search(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_RANGEOFIPADDR) == BST_CHECKED)
 	{
 		CIPAddressCtrl* cIpCntrl;
 		DWORD startDwAddress;
 		DWORD endDwAddress;
+		CString tmpStr;
 
 		cIpCntrl = (CIPAddressCtrl*)(GetDlgItem(IDC_IPADDRESS1));
 		cIpCntrl->GetAddress(startDwAddress);
 		cIpCntrl = (CIPAddressCtrl*)(GetDlgItem(IDC_IPADDRESS2));
 		cIpCntrl->GetAddress(endDwAddress);
 
-		viewModelLogic.Search(L"RangeOfIpAddr", startDwAddress, endDwAddress);
+		if (tmpStr.LoadString(IDC_RANGEOFIPADDR))
+			viewModelLogic.Search(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
 	{
@@ -209,18 +223,30 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 
 	if (IsDlgButtonChecked(IDC_THISPCINFO) == BST_CHECKED)
 	{
+		CWnd* cWnd;
+		CString tmpStr;
+
 		cWnd = GetDlgItem(IDOK);
-		cWnd->SetWindowTextW(L"This PC info");
+		if(tmpStr.LoadString(IDC_THISPCINFO))
+			cWnd->SetWindowText(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_THISPCSUBNET) == BST_CHECKED)
 	{
+		CWnd* cWnd;
+		CString tmpStr;
+
 		cWnd = GetDlgItem(IDOK);
-		cWnd->SetWindowTextW(L"This PC subnet");
+		if (tmpStr.LoadString(IDC_THISPCSUBNET))
+			cWnd->SetWindowText(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_RANGEOFIPADDR) == BST_CHECKED)
 	{
+		CWnd* cWnd;
+		CString tmpStr;
+
 		cWnd = GetDlgItem(IDOK);
-		cWnd->SetWindowTextW(L"Range of IP addresses");
+		if (tmpStr.LoadString(IDC_RANGEOFIPADDR))
+			cWnd->SetWindowText(tmpStr);
 		cWnd = GetDlgItem(IDC_IPADDRESS1);
 		cWnd->EnableWindow(1);
 		cWnd = GetDlgItem(IDC_IPADDRESS2);
@@ -228,12 +254,20 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 	}
 	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
 	{
+		CWnd* cWnd;
+		CString tmpStr;
+
 		cWnd = GetDlgItem(IDOK);
-		cWnd->SetWindowTextW(L"Save");
+		if (tmpStr.LoadString(IDC_SAVE))
+			cWnd->SetWindowText(tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_LOAD) == BST_CHECKED)
 	{
+		CWnd* cWnd;
+		CString tmpStr;
+
 		cWnd = GetDlgItem(IDOK);
-		cWnd->SetWindowTextW(L"Load");
+		if (tmpStr.LoadString(IDC_LOAD))
+			cWnd->SetWindowText(tmpStr);
 	}
 }
