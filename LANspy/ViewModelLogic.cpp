@@ -34,12 +34,12 @@ void ViewModelLogic::Save(CListCtrl& listCtrlView)
 
 }
 
-void ViewModelLogic::Search(CString option)
+void ViewModelLogic::Search(CListCtrl&, CString option)
 {
 
 }
 
-void ViewModelLogic::Search(CString option, DWORD startDwAddress, DWORD endDwAddress)
+void ViewModelLogic::Search(CListCtrl&, CString option, DWORD startDwAddress, DWORD endDwAddress)
 {
 
 }
