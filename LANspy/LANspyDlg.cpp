@@ -165,7 +165,7 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 }
 
 //
-//Custom Events
+//Custom message handlers
 //
 
 //Function that calls ViewModelLogic to performe some logic based on options that user choose
@@ -178,7 +178,7 @@ void CLANspyDlg::OnBnClickedOk()
 		if (!tmpStr.LoadString(IDC_THISPCINFO))
 			tmpStr = "";
 
-		viewModelLogic.Search(tmpStr);
+		viewModelLogic.Search(listCtrlView, tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_THISPCSUBNET) == BST_CHECKED)
 	{
@@ -187,7 +187,7 @@ void CLANspyDlg::OnBnClickedOk()
 		if (!tmpStr.LoadString(IDC_THISPCSUBNET))
 			tmpStr = "";
 
-		viewModelLogic.Search(tmpStr);
+		viewModelLogic.Search(listCtrlView, tmpStr);
 	}
 	else if (IsDlgButtonChecked(IDC_RANGEOFIPADDR) == BST_CHECKED)
 	{
@@ -204,11 +204,12 @@ void CLANspyDlg::OnBnClickedOk()
 		if (!tmpStr.LoadString(IDC_RANGEOFIPADDR))
 			tmpStr = "";
 
-		viewModelLogic.Search(tmpStr, startDwAddress, endDwAddress);
+		viewModelLogic.Search(listCtrlView, tmpStr, startDwAddress, endDwAddress);
 	}
 	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
 	{
-		viewModelLogic.Save();
+		if(listCtrlView.GetItemCount())
+			viewModelLogic.Save(listCtrlView);
 	}
 	else if (IsDlgButtonChecked(IDC_LOAD) == BST_CHECKED)
 	{

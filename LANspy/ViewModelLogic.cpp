@@ -29,7 +29,7 @@ void ViewModelLogic::Load(CListCtrl& listCtrlView)
 	IPaddress->Close();
 }
 
-void ViewModelLogic::Save()
+void ViewModelLogic::Save(CListCtrl& listCtrlView)
 {
 
 }
