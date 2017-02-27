@@ -208,8 +208,19 @@ void CLANspyDlg::OnBnClickedOk()
 	}
 	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
 	{
+		CString tmpStr1, tmpStr2;
+
 		if(listCtrlView.GetItemCount())
 			viewModelLogic.Save(listCtrlView);
+		else
+		{
+			if (!tmpStr1.LoadString(IDC_SAVE))
+				tmpStr1 = "";
+			if (!tmpStr2.LoadString(MESSAGEBOXSAVE))
+				tmpStr2 = "";
+
+			MessageBox(tmpStr2, tmpStr1, MB_ICONASTERISK);
+		}
 	}
 	else if (IsDlgButtonChecked(IDC_LOAD) == BST_CHECKED)
 	{
