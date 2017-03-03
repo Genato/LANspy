@@ -8,7 +8,6 @@ class CAboutDlg : public CDialogEx
 {
 public:
 	CAboutDlg();
-
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
