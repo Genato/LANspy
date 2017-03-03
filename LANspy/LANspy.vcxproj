@@ -91,7 +91,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\WWGENATO\VSITE\Projects\LANspy\Spy;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\WWGENATO\VSITE\Projects\LANspy\Traverse;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -215,6 +215,11 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\LANspy.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Traverse\Traverse.vcxproj">
+      <Project>{419797df-9989-4b7c-a300-c559393a764b}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

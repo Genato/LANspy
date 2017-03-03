@@ -40,6 +40,7 @@
 #include "resource.h"		
 #include "ViewModelLogic.h"
 #include "LANspyDlg.h"
+#include "Traverse.h"
 
 
 #ifndef __AFXWIN_H__

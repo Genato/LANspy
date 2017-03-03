@@ -18,6 +18,12 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Traverse.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Traverse.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{419797DF-9989-4B7C-A300-C559393A764B}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
