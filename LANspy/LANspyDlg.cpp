@@ -3,7 +3,6 @@
 #include "stdafx.h"
 
 // CAboutDlg dialog used for App About
-
 class CAboutDlg : public CDialogEx
 {
 public:
@@ -35,9 +34,6 @@ END_MESSAGE_MAP()
 
 
 // CLANspyDlg dialog
-
-
-
 CLANspyDlg::CLANspyDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_LANSPY_DIALOG, pParent) 
 {
@@ -62,8 +58,9 @@ BEGIN_MESSAGE_MAP(CLANspyDlg, CDialogEx)
 	ON_COMMAND(IDC_LOAD, &CLANspyDlg::OnRadioBtnChange)
 END_MESSAGE_MAP()
 
-
+//////////////////////////////
 // CLANspyDlg message handlers
+//////////////////////////////
 
 BOOL CLANspyDlg::OnInitDialog()
 {
@@ -127,10 +124,6 @@ void CLANspyDlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// If you add a minimize button to your dialog, you will need the code below
-//  to draw the icon.  For MFC applications using the document/view model,
-//  this is automatically done for you by the framework.
-
 void CLANspyDlg::OnPaint()
 {
 	if (IsIconic())
@@ -163,9 +156,9 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-//
+///////////////////////////////////////////////////////////////////////////////////////
 //Custom message handlers
-//
+///////////////////////////////////////////////////////////////////////////////////////
 
 //Function that calls ViewModelLogic to performe some logic based on options that user choose
 void CLANspyDlg::OnBnClickedOk()
