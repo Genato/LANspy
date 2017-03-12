@@ -1,6 +1,7 @@
 // LANspyDlg.h : header file
 
 #pragma once
+#include "afxcmn.h"
 //#include "afxcmn.h"
 
 // CLANspyDlg dialog
@@ -10,6 +11,7 @@ class CLANspyDlg : public CDialogEx
 public:
 	CListCtrl listCtrlView;
 	ViewModelLogic viewModelLogic;
+	CProgressCtrl progressBar;
 
 	CLANspyDlg(CWnd* pParent = NULL);	// standard constructor
 
@@ -35,5 +37,5 @@ protected:
 public:
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnRadioBtnChange();	
-	
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
