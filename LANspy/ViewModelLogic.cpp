@@ -6,8 +6,10 @@ ViewModelLogic::ViewModelLogic() : IPaddress(new CIPaddresses()){}
 ViewModelLogic::~ViewModelLogic() 
 {
 	delete IPaddress;
+	//delete traverse;
 }
 
+//Function for loading LAN information from database
 void ViewModelLogic::Load(CListCtrl& listCtrlView) 
 {
 	if(!IPaddress->IsOpen())
@@ -29,6 +31,7 @@ void ViewModelLogic::Load(CListCtrl& listCtrlView)
 	IPaddress->Close();
 }
 
+//Function for saving LAN information to database
 void ViewModelLogic::Save(CListCtrl& listCtrlView)
 {
 	if (!IPaddress->IsOpen())
@@ -66,12 +69,61 @@ void ViewModelLogic::Save(CListCtrl& listCtrlView)
 	listCtrlView.DeleteAllItems();
 }
 
-void ViewModelLogic::Search(CListCtrl&, CString option)
+//Overloaded function for searching through LAN (this function gets this PC info)
+void ViewModelLogic::SearchThisPcInfo()
+{
+	traverse = new LAN::ThisPcInfo();
+
+	auto fun = std::bind(&LAN::Traverse::Search, traverse, std::placeholders::_1);
+	future = std::async(std::launch::async, fun, traverse);
+}
+
+//Overloaded function for searching through LAN (this function gets this PC subnet)
+void ViewModelLogic::SearchThisPcSubnet()
 {
 
 }
 
-void ViewModelLogic::Search(CListCtrl&, CString option, DWORD startDwAddress, DWORD endDwAddress)
+//Overloaded function for searching through LAN (this function gets range of addresses)
+void ViewModelLogic::SearchRangeOfAddre(DWORD startDwAddress, DWORD endDwAddress)
 {
 
+}
+
+bool ViewModelLogic::GetTraverseResult(CListCtrl& listCtrlView)
+{
+	bool futureResults = false;
+
+	if (future._Is_ready() && future.valid())
+	{
+		std::vector<LAN::IpAddressesModel> tmpVec;
+
+		tmpVec = future.get();
+		futureResults = true;
+		listCtrlView.DeleteAllItems();
+
+		for (int i = 0; tmpVec.size() > 0; ++i)
+		{
+			listCtrlView.InsertItem(i, ToCString(tmpVec.back().ipAddress));
+			listCtrlView.SetItemText(i, 1, ToCString(tmpVec.back().hostName));
+			listCtrlView.SetItemText(i, 2, ToCString(tmpVec.back().macAddress));
+			tmpVec.pop_back();
+		}
+	}
+
+	return futureResults;
+}
+
+//
+//Helper methods
+//
+
+std::string ViewModelLogic::ToStdString(CString str)
+{
+	return std::string(CW2A(str.GetString()));
+}
+
+CString ViewModelLogic::ToCString(std::string str)
+{
+	return CString(str.c_str());
 }

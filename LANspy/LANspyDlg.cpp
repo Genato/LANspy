@@ -44,6 +44,7 @@ void CLANspyDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_LIST1, listCtrlView);
+	DDX_Control(pDX, IDC_PROGRESS1, progressBar);
 }
 
 BEGIN_MESSAGE_MAP(CLANspyDlg, CDialogEx)
@@ -56,6 +57,7 @@ BEGIN_MESSAGE_MAP(CLANspyDlg, CDialogEx)
 	ON_COMMAND(IDC_RANGEOFIPADDR, &CLANspyDlg::OnRadioBtnChange)
 	ON_COMMAND(IDC_SAVE, &CLANspyDlg::OnRadioBtnChange)
 	ON_COMMAND(IDC_LOAD, &CLANspyDlg::OnRadioBtnChange)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 //////////////////////////////
@@ -163,40 +165,30 @@ HCURSOR CLANspyDlg::OnQueryDragIcon()
 //Function that calls ViewModelLogic to performe some logic based on options that user choose
 void CLANspyDlg::OnBnClickedOk()
 {
+	this->SetTimer(ID_TIMER, 500, 0);
+	progressBar.SetPos(0);
+	this->progressBar.SetStep(10);
+
 	if (IsDlgButtonChecked(IDC_THISPCINFO) == BST_CHECKED)
 	{
-		CString tmpStr;
-
-		if (!tmpStr.LoadString(IDC_THISPCINFO))
-			tmpStr = "";
-
-		viewModelLogic.Search(listCtrlView, tmpStr);
+		viewModelLogic.SearchThisPcInfo();
 	}
 	else if (IsDlgButtonChecked(IDC_THISPCSUBNET) == BST_CHECKED)
 	{
-		CString tmpStr;
-
-		if (!tmpStr.LoadString(IDC_THISPCSUBNET))
-			tmpStr = "";
-
-		viewModelLogic.Search(listCtrlView, tmpStr);
+		viewModelLogic.SearchThisPcSubnet();
 	}
 	else if (IsDlgButtonChecked(IDC_RANGEOFIPADDR) == BST_CHECKED)
 	{
 		CIPAddressCtrl* cIpCntrl;
 		DWORD startDwAddress;
 		DWORD endDwAddress;
-		CString tmpStr;
 
 		cIpCntrl = (CIPAddressCtrl*)(GetDlgItem(IDC_IPADDRESS1));
 		cIpCntrl->GetAddress(startDwAddress);
 		cIpCntrl = (CIPAddressCtrl*)(GetDlgItem(IDC_IPADDRESS2));
 		cIpCntrl->GetAddress(endDwAddress);
 
-		if (!tmpStr.LoadString(IDC_RANGEOFIPADDR))
-			tmpStr = "";
-
-		viewModelLogic.Search(listCtrlView, tmpStr, startDwAddress, endDwAddress);
+		viewModelLogic.SearchRangeOfAddre(startDwAddress, endDwAddress);
 	}
 	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
 	{
@@ -218,7 +210,6 @@ void CLANspyDlg::OnBnClickedOk()
 	{
 		viewModelLogic.Load(listCtrlView);
 	}
-
 }
 
 //Function that disable/enable controls
@@ -290,4 +281,23 @@ afx_msg void CLANspyDlg::OnRadioBtnChange()
 
 		cWnd->SetWindowText(tmpStr);
 	}
+}
+
+
+void CLANspyDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	srand(time(NULL));
+
+	if (!viewModelLogic.GetTraverseResult(listCtrlView))
+	{
+		progressBar.SetPos((rand() % 100) + progressBar.GetPos());
+	}
+	else
+	{
+		progressBar.SetPos(100);
+		progressBar.SetWindowTextW(L"kjfdhjsdkahflkjs");
+		this->KillTimer(ID_TIMER);
+	}
+
+	CDialogEx::OnTimer(nIDEvent);
 }

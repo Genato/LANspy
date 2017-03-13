@@ -35,12 +35,13 @@
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 #include <afxdb.h>
 
+#include "ThreadPool.h"
+#include "Traverse.h"
 #include "LANspy.h"
 #include "IPaddresses.h"
 #include "resource.h"		
 #include "ViewModelLogic.h"
 #include "LANspyDlg.h"
-#include "Traverse.h"
 
 
 #ifndef __AFXWIN_H__
