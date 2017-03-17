@@ -1,5 +1,5 @@
 #pragma once
-#include "Traverse.h"
+#include "..\Traverse\Traverse.h"
 #include "IPaddresses.h"
 
 class ViewModelLogic
