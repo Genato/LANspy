@@ -1,6 +1,5 @@
-// LANspyDlg.cpp : implementation file
-
 #include "stdafx.h"
+#include "LANspyDlg.h"
 
 // CAboutDlg dialog used for App About
 class CAboutDlg : public CDialogEx
@@ -171,11 +170,11 @@ void CLANspyDlg::OnBnClickedOk()
 
 	if (IsDlgButtonChecked(IDC_THISPCINFO) == BST_CHECKED)
 	{
-		viewModelLogic.SearchThisPcInfo();
+		viewModelLogic.Search(IDC_THISPCINFO);
 	}
 	else if (IsDlgButtonChecked(IDC_THISPCSUBNET) == BST_CHECKED)
 	{
-		viewModelLogic.SearchThisPcSubnet();
+		viewModelLogic.Search(IDC_THISPCSUBNET);
 	}
 	else if (IsDlgButtonChecked(IDC_RANGEOFIPADDR) == BST_CHECKED)
 	{
@@ -188,7 +187,7 @@ void CLANspyDlg::OnBnClickedOk()
 		cIpCntrl = (CIPAddressCtrl*)(GetDlgItem(IDC_IPADDRESS2));
 		cIpCntrl->GetAddress(endDwAddress);
 
-		viewModelLogic.SearchRangeOfAddre(startDwAddress, endDwAddress);
+		viewModelLogic.Search(startDwAddress, endDwAddress, IDC_RANGEOFIPADDR);
 	}
 	else if (IsDlgButtonChecked(IDC_SAVE) == BST_CHECKED)
 	{
@@ -295,7 +294,6 @@ void CLANspyDlg::OnTimer(UINT_PTR nIDEvent)
 	else
 	{
 		progressBar.SetPos(100);
-		progressBar.SetWindowTextW(L"kjfdhjsdkahflkjs");
 		this->KillTimer(ID_TIMER);
 	}
 

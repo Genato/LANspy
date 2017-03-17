@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "ViewModelLogic.h"
 
 
 ViewModelLogic::ViewModelLogic() : IPaddress(new CIPaddresses()){}
@@ -6,10 +7,9 @@ ViewModelLogic::ViewModelLogic() : IPaddress(new CIPaddresses()){}
 ViewModelLogic::~ViewModelLogic() 
 {
 	delete IPaddress;
-	//delete traverse;
+	delete traverse;
 }
 
-//Function for loading LAN information from database
 void ViewModelLogic::Load(CListCtrl& listCtrlView) 
 {
 	if(!IPaddress->IsOpen())
@@ -31,7 +31,6 @@ void ViewModelLogic::Load(CListCtrl& listCtrlView)
 	IPaddress->Close();
 }
 
-//Function for saving LAN information to database
 void ViewModelLogic::Save(CListCtrl& listCtrlView)
 {
 	if (!IPaddress->IsOpen())
@@ -69,23 +68,15 @@ void ViewModelLogic::Save(CListCtrl& listCtrlView)
 	listCtrlView.DeleteAllItems();
 }
 
-//Overloaded function for searching through LAN (this function gets this PC info)
-void ViewModelLogic::SearchThisPcInfo()
+void ViewModelLogic::Search(int choice)
 {
-	traverse = new LAN::ThisPcInfo();
+	traverse = LAN::GetTraverseObject(choice);
 
 	auto fun = std::bind(&LAN::Traverse::Search, traverse, std::placeholders::_1);
 	future = std::async(std::launch::async, fun, traverse);
 }
 
-//Overloaded function for searching through LAN (this function gets this PC subnet)
-void ViewModelLogic::SearchThisPcSubnet()
-{
-
-}
-
-//Overloaded function for searching through LAN (this function gets range of addresses)
-void ViewModelLogic::SearchRangeOfAddre(DWORD startDwAddress, DWORD endDwAddress)
+void ViewModelLogic::Search(DWORD startDwAddress, DWORD endDwAddress, int choice)
 {
 
 }
