@@ -1,5 +1,5 @@
 #include "..\LANspy\stdafx.h"
-
+#include "Traverse.h"
 
 VOID NTAPI ReplyCame(PVOID context, PIO_STATUS_BLOCK pio, DWORD reserved)
 {

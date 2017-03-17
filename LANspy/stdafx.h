@@ -11,6 +11,8 @@
 
 #include "targetver.h"
 
+#define _AFXDLL
+
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // some CString constructors will be explicit
 
 // turns off MFC's hiding of some common and often safely ignored warning messages
@@ -35,14 +37,53 @@
 #include <afxcontrolbars.h>     // MFC support for ribbons and control bars
 #include <afxdb.h>
 
-#include "ThreadPool.h"
-#include "Traverse.h"
-#include "LANspy.h"
-#include "IPaddresses.h"
 #include "resource.h"		
-#include "ViewModelLogic.h"
-#include "LANspyDlg.h"
 
+/////////////////////////////////////////
+//Traverse specific includes and defines
+/////////////////////////////////////////
+#undef UNICODE
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <Ipexport.h>
+
+typedef struct _IO_STATUS_BLOCK {
+	union {
+		NTSTATUS Status;
+		PVOID    Pointer;
+	};
+	ULONG_PTR Information;
+} IO_STATUS_BLOCK, *PIO_STATUS_BLOCK;
+
+typedef
+VOID(NTAPI *PIO_APC_ROUTINE) (
+	IN PVOID ApcContext,
+	IN PIO_STATUS_BLOCK IoStatusBlock,
+	IN ULONG Reserved
+	);
+
+#define PIO_APC_ROUTINE_DEFINED
+
+#include <Iphlpapi.h>
+#include <icmpapi.h>
+#include <Iptypes.h>
+
+#define WORKING_BUFFER_SIZE 15000
+#define MAX_TRIES 3
+#define MALLOC(x) HeapAlloc(GetProcessHeap(), 0, (x))
+#define FREE(x) HeapFree(GetProcessHeap(), 0, (x))
+
+#if defined(_MSC_VER)
+#pragma comment(lib, "iphlpapi.lib")
+#pragma comment(lib, "ws2_32.lib")	
+#endif
+
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+#include <bitset>
+////////////////////////////////////////
 
 #ifndef __AFXWIN_H__
 #error "include 'stdafx.h' before including this file for PCH"

@@ -1,8 +1,7 @@
-// LANspy.cpp : Defines the class behaviors for the application.
-
 #include "stdafx.h"
+#include "LANspyDlg.h"
+#include "LANspy.h"
 
-// CLANspyApp
 
 BEGIN_MESSAGE_MAP(CLANspyApp, CWinApp)
 	ON_COMMAND(ID_HELP, &CWinApp::OnHelp)

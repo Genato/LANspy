@@ -1,8 +1,6 @@
-// LANspyDlg.h : header file
-
 #pragma once
 #include "afxcmn.h"
-//#include "afxcmn.h"
+#include "ViewModelLogic.h"
 
 // CLANspyDlg dialog
 class CLANspyDlg : public CDialogEx
