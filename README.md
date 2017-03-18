@@ -3,7 +3,8 @@ MFC project
 
 <br>
 
-This is MFC application for searching through LAN and there is few options that you can choose like search, load or save to database.<br>
+This is MFC application for searching through LAN and there is few options that you can choose like search, load or save to database.
+<br><br>
 In order to setup project there is few steps you need to do before you could use it.<br><br>
 
 1. Create database and table (MS sql - i use SQLEXPRESS but there isn't difference between express and standard version)
