@@ -13,41 +13,6 @@ VOID NTAPI ReplyCame(PVOID context, PIO_STATUS_BLOCK pio, DWORD reserved)
 //Traverse Member implemetation
 ///////////////////////////////////////////////////////////////////////////////////
 
-void LAN::Traverse::SendICMP(IpAddressesModel* ipAddressModel)
-{
-	HANDLE hIcmpFile;
-	unsigned long ipaddr = INADDR_NONE;
-	char * data = "hi all";
-	char * ReplyBuffer = (char*)malloc(sizeof(ICMP_ECHO_REPLY) * 1000 + 8);
-	DWORD ReplySize = 0;
-	std::stringstream ss;
-
-	ipaddr = inet_addr(ipAddressModel->ipAddress.c_str());
-	if (ipaddr == INADDR_NONE)
-	{
-		return;
-	}
-
-	hIcmpFile = IcmpCreateFile();
-	if (hIcmpFile == INVALID_HANDLE_VALUE)
-	{
-		return;
-	}
-
-	DWORD dwRetVal = IcmpSendEcho2(hIcmpFile, 0, ReplyCame, 0, ipaddr,
-		data, strlen(data), NULL, ReplyBuffer, (sizeof(ICMP_ECHO_REPLY) * 1000) + 8, 1000);
-
-	//if (dwRetVal == ERROR_IO_PENDING)
-	//{
-	//	return;
-	//}
-
-	ipAddressModel->hostName = ResolveHostname(ipAddressModel->ipAddress);
-	ipAddressModel->macAddress = SendArp(ipAddressModel->ipAddress);
-
-	addresses.push_back(*ipAddressModel);
-}
-
 LAN::IpAddressesModel LAN::Traverse::GetAdaptersAddress()
 {
 	IpAddressesModel ipAddressModel;
@@ -93,7 +58,7 @@ LAN::IpAddressesModel LAN::Traverse::GetAdaptersAddress()
 		{
 			if (pCurrAddresses->OperStatus == IF_OPER_STATUS::IfOperStatusUp)
 			{
-				// MAC address
+				//Parsing MAC address
 				std::string mac_str;
 				std::stringstream ss;
 				if (pCurrAddresses->PhysicalAddressLength != 0)
@@ -114,7 +79,7 @@ LAN::IpAddressesModel LAN::Traverse::GetAdaptersAddress()
 				}
 
 
-				// IP address and subnet mask
+				//Parsing IP address and subnet mask
 				std::string ip_str;
 				PULONG mask = &outBufLen;
 				unsigned long net_mask;
@@ -193,6 +158,41 @@ LAN::IpAddressesModel LAN::Traverse::GetAdaptersAddress()
 	}
 
 	return ipAddressModel;
+}
+
+void LAN::Traverse::SendICMP(IpAddressesModel* ipAddressModel)
+{
+	HANDLE hIcmpFile;
+	unsigned long ipaddr = INADDR_NONE;
+	char * data = "hi all";
+	char * ReplyBuffer = (char*)malloc(sizeof(ICMP_ECHO_REPLY) * 1000 + 8);
+	DWORD ReplySize = 0;
+	std::stringstream ss;
+
+	ipaddr = inet_addr(ipAddressModel->ipAddress.c_str());
+	if (ipaddr == INADDR_NONE)
+	{
+		return;
+	}
+
+	hIcmpFile = IcmpCreateFile();
+	if (hIcmpFile == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	DWORD dwRetVal = IcmpSendEcho2(hIcmpFile, 0, ReplyCame, 0, ipaddr,
+		data, strlen(data), NULL, ReplyBuffer, (sizeof(ICMP_ECHO_REPLY) * 1000) + 8, 1000);
+
+	//if (dwRetVal == ERROR_IO_PENDING)
+	//{
+	//	return;
+	//}
+
+	ipAddressModel->hostName = ResolveHostname(ipAddressModel->ipAddress);
+	ipAddressModel->macAddress = SendArp(ipAddressModel->ipAddress);
+
+	addresses.push_back(*ipAddressModel);
 }
 
 std::string LAN::Traverse::ResolveHostname(const std::string& ipAddress)
