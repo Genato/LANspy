@@ -22,7 +22,7 @@ In order to setup project there is few steps you need to do before you could use
     
 <br>
 
-2. Create new Systen DSN in ODBC called **NWP**
+2. Create new Systen DSN in ODBC called **NWP** and configure it to connect to database you created in first step. 
 
 <br>
 
