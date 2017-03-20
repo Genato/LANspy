@@ -83,6 +83,7 @@ VOID(NTAPI *PIO_APC_ROUTINE) (
 #include <sstream>
 #include <iomanip>
 #include <bitset>
+#include <map>
 ////////////////////////////////////////
 
 #ifndef __AFXWIN_H__

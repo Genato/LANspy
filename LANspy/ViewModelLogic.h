@@ -7,7 +7,7 @@ class ViewModelLogic
 public:
 	CIPaddresses* IPaddress;
 	LAN::Traverse* traverse;
-	std::future<std::vector<LAN::IpAddressesModel>> future;
+	std::future<std::map<std::string, LAN::IpAddressesModel>> future;
 
 	ViewModelLogic();
 	~ViewModelLogic();

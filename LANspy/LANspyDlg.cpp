@@ -34,7 +34,7 @@ END_MESSAGE_MAP()
 
 // CLANspyDlg dialog
 CLANspyDlg::CLANspyDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(IDD_LANSPY_DIALOG, pParent) 
+	: CDialogEx(IDD_LANSPY_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }

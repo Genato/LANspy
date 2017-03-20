@@ -1,8 +1,18 @@
 #pragma once
 #include "ThreadPool.h"
 
+
 namespace LAN
 {
+	class Traverse;
+
+	class GlobalVariableHolder
+	{
+	public:
+		LAN::Traverse* traverse;
+		std::string ipAddress;
+	};
+
 ///////////////////////////////////////////////////////////////////////////////////
 //Model for IP address
 ///////////////////////////////////////////////////////////////////////////////////
@@ -21,26 +31,32 @@ namespace LAN
 	class Traverse
 	{
 	public:
-
-		virtual std::vector<LAN::IpAddressesModel> Search(Traverse* traverse)
+		virtual std::map<std::string, LAN::IpAddressesModel> Search(Traverse* traverse)
 		{
-			return addresses;
+			return addressess;
 		}
+
+		void IncrementCallbackReplys();
+
+		void InsertAddressModelIntoMap(std::string ipAddress);
 
 	protected:
 		//Member functions
 
-		void LAN::Traverse::SendICMP(IpAddressesModel* ipAddressModel);
+		void LAN::Traverse::SendICMP(GlobalVariableHolder* pointerForCallbackMethod, std::string ipAddress);
 
 		LAN::IpAddressesModel LAN::Traverse::GetAdaptersAddress();
 
-		std::string LAN::Traverse::ResolveHostname(const std::string& ipAddress);
+		void LAN::Traverse::ResolveHostname(const std::string& ipAddress);
 
-		std::string LAN::Traverse::SendArp(const std::string& str_ip);
+		void LAN::Traverse::SendArp(const std::string& str_ip);
 
 		//Members
 
 		std::vector<LAN::IpAddressesModel> addresses;
+		std::map<std::string, LAN::IpAddressesModel> addressess;
+		int callbackReplys = 0;
+		std::mutex mtx;
 	};
 
 	//Function for getting object of Trverse derived class. (Use it in Traverse* as polymorphism)

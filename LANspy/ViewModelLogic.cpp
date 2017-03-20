@@ -87,18 +87,19 @@ bool ViewModelLogic::GetTraverseResult(CListCtrl& listCtrlView)
 
 	if (future._Is_ready() && future.valid())
 	{
-		std::vector<LAN::IpAddressesModel> tmpVec;
+		std::map<std::string, LAN::IpAddressesModel> tmpMap;
 
-		tmpVec = future.get();
+		tmpMap = future.get();
 		futureResults = true;
 		listCtrlView.DeleteAllItems();
 
-		for (int i = 0; tmpVec.size() > 0; ++i)
+		for (std::map<std::string, LAN::IpAddressesModel>::iterator it = tmpMap.begin(); it != tmpMap.end(); ++it)
 		{
-			listCtrlView.InsertItem(i, ToCString(tmpVec.back().ipAddress));
-			listCtrlView.SetItemText(i, 1, ToCString(tmpVec.back().hostName));
-			listCtrlView.SetItemText(i, 2, ToCString(tmpVec.back().macAddress));
-			tmpVec.pop_back();
+			int n = listCtrlView.GetItemCount();
+
+			listCtrlView.InsertItem(n, ToCString(it->second.ipAddress));
+			listCtrlView.SetItemText(n, 1, ToCString(it->second.hostName));
+			listCtrlView.SetItemText(n, 2, ToCString(it->second.macAddress));
 		}
 	}
 

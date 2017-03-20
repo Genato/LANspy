@@ -1,10 +1,20 @@
 #include "..\LANspy\stdafx.h"
 #include "Traverse.h"
 
+//Callback method for async call of SendICMP() --> IcmpSendEcho2()
 VOID NTAPI ReplyCame(PVOID context, PIO_STATUS_BLOCK pio, DWORD reserved)
 {
-	CString str("Hellou from CALLBACK!!");
-	MessageBox(NULL, str, str, NULL);
+	LAN::GlobalVariableHolder* pointerForCallbackFun = (LAN::GlobalVariableHolder*)context;
+
+	pointerForCallbackFun->traverse->IncrementCallbackReplys();
+
+	if (pio->Status == 0)
+	{
+		pointerForCallbackFun->traverse->InsertAddressModelIntoMap(pointerForCallbackFun->ipAddress);
+	}
+
+	//CString str(pointerForCallbackFun->ipAddress.c_str());
+	//MessageBox(NULL, str, str, NULL);
 
 	return;
 }
@@ -160,7 +170,7 @@ LAN::IpAddressesModel LAN::Traverse::GetAdaptersAddress()
 	return ipAddressModel;
 }
 
-void LAN::Traverse::SendICMP(IpAddressesModel* ipAddressModel)
+void LAN::Traverse::SendICMP(GlobalVariableHolder* pointerForCallbackMethod, std::string ipAddress)
 {
 	HANDLE hIcmpFile;
 	unsigned long ipaddr = INADDR_NONE;
@@ -169,7 +179,7 @@ void LAN::Traverse::SendICMP(IpAddressesModel* ipAddressModel)
 	DWORD ReplySize = 0;
 	std::stringstream ss;
 
-	ipaddr = inet_addr(ipAddressModel->ipAddress.c_str());
+	ipaddr = inet_addr(ipAddress.c_str());
 	if (ipaddr == INADDR_NONE)
 	{
 		return;
@@ -181,21 +191,16 @@ void LAN::Traverse::SendICMP(IpAddressesModel* ipAddressModel)
 		return;
 	}
 
-	DWORD dwRetVal = IcmpSendEcho2(hIcmpFile, 0, ReplyCame, 0, ipaddr,
+	DWORD dwRetVal = IcmpSendEcho2(hIcmpFile, 0, ReplyCame, pointerForCallbackMethod, ipaddr,
 		data, strlen(data), NULL, ReplyBuffer, (sizeof(ICMP_ECHO_REPLY) * 1000) + 8, 1000);
 
 	//if (dwRetVal == ERROR_IO_PENDING)
 	//{
 	//	return;
 	//}
-
-	ipAddressModel->hostName = ResolveHostname(ipAddressModel->ipAddress);
-	ipAddressModel->macAddress = SendArp(ipAddressModel->ipAddress);
-
-	addresses.push_back(*ipAddressModel);
 }
 
-std::string LAN::Traverse::ResolveHostname(const std::string& ipAddress)
+void LAN::Traverse::ResolveHostname(const std::string& ipAddress)
 {
 	// Declare and initialize variables
 	WSADATA wsaData = { 0 };
@@ -227,12 +232,12 @@ std::string LAN::Traverse::ResolveHostname(const std::string& ipAddress)
 	dwRetval = getnameinfo((struct sockaddr *) &saGNI, sizeof(struct sockaddr), hostname, NI_MAXHOST, servInfo, NI_MAXSERV, NI_NUMERICSERV);
 
 	if (dwRetval != 0)
-		return "Couldn't resolve hostname.";
+		addressess[ipAddress].hostName = "Couldn't resolve hostname.";
 
-	return hostname;
+	addressess[ipAddress].hostName = hostname;
 }
 
-std::string LAN::Traverse::SendArp(const std::string& str_ip)
+void LAN::Traverse::SendArp(const std::string& str_ip)
 {
 	DWORD dwRetVal;
 	IPAddr DestIp = 0;
@@ -298,7 +303,29 @@ std::string LAN::Traverse::SendArp(const std::string& str_ip)
 		}
 	}
 
-	return ss.str();
+	addressess[str_ip].macAddress = ss.str();
+	return /*ss.str()*/;
+}
+
+void LAN::Traverse::IncrementCallbackReplys()
+{
+	std::unique_lock<std::mutex> lck(mtx, std::defer_lock);
+	lck.lock();
+
+	++callbackReplys;
+
+	lck.unlock();
+}
+
+void LAN::Traverse::InsertAddressModelIntoMap(std::string ipAddress)
+{
+	std::unique_lock<std::mutex> lck(mtx, std::defer_lock);
+	lck.lock();
+
+	LAN::IpAddressesModel tmpIpAddreModel;
+	addressess.insert(std::pair<std::string, LAN::IpAddressesModel>(ipAddress, tmpIpAddreModel));
+
+	lck.unlock();
 }
 
 
@@ -309,15 +336,24 @@ class ThisPcInfo : public LAN::Traverse
 {
 public:
 
-	virtual std::vector<LAN::IpAddressesModel> Search(LAN::Traverse* traverse) override
+	virtual std::map<std::string, LAN::IpAddressesModel> Search(LAN::Traverse* traverse) override
 	{
+		LAN::GlobalVariableHolder pointerForCallbackMethod;
 		LAN::IpAddressesModel ipAddressModel;
 
 		ipAddressModel = LAN::Traverse::GetAdaptersAddress();
 
-		LAN::Traverse::SendICMP(&ipAddressModel);
+		pointerForCallbackMethod.ipAddress = ipAddressModel.ipAddress;
+		pointerForCallbackMethod.traverse = traverse;
 
-		return addresses;
+		LAN::Traverse::SendICMP(&pointerForCallbackMethod, ipAddressModel.ipAddress);
+		SleepEx(1100, true);
+
+		LAN::Traverse::ResolveHostname(ipAddressModel.ipAddress);
+		LAN::Traverse::SendArp(ipAddressModel.ipAddress);
+		addressess[ipAddressModel.ipAddress].ipAddress = ipAddressModel.ipAddress;
+
+		return addressess;
 	}
 };
 
@@ -370,3 +406,14 @@ LAN::Traverse* LAN::GetTraverseObject(int choice)
 //	thPool.enqueue( [=] { ResolveHostname(addresses.at(i).ipAddress); });
 //}
 //thPool.~ThreadPool();
+
+/*		std::string ttt1("192.168.5.35");
+		pointerForCallbackMethod[1].ipAddress = ttt1;
+		LAN::Traverse::SendICMP(&pointerForCallbackMethod[1], ttt1);
+		pointerForCallbackMethod[0].traverse = traverse;
+
+		int cntSendICMP = 0;
+		while(callbackReplys < cntSendICMP)
+		SleepEx(1100, true);
+
+*/
