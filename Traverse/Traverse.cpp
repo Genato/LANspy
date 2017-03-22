@@ -344,7 +344,7 @@ public:
 		ipAddressModel = LAN::Traverse::GetAdaptersAddress();
 
 		pointerForCallbackMethod.ipAddress = ipAddressModel.ipAddress;
-		pointerForCallbackMethod.traverse = traverse;
+		pointerForCallbackMethod.traverse = this;
 
 		LAN::Traverse::SendICMP(&pointerForCallbackMethod, ipAddressModel.ipAddress);
 		SleepEx(1100, true);

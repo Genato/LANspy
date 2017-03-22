@@ -6,6 +6,9 @@ namespace LAN
 {
 	class Traverse;
 
+//////////////////////////////////////////////////////////////////////////////////////////
+//Class that holds Traverse pointer and ip address for every async call of icmpsendecho2
+//////////////////////////////////////////////////////////////////////////////////////////
 	class GlobalVariableHolder
 	{
 	public:
@@ -53,7 +56,6 @@ namespace LAN
 
 		//Members
 
-		std::vector<LAN::IpAddressesModel> addresses;
 		std::map<std::string, LAN::IpAddressesModel> addressess;
 		int callbackReplys = 0;
 		std::mutex mtx;
