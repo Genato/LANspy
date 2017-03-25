@@ -247,23 +247,19 @@ void LAN::Traverse::SendArp(const std::string& str_ip)
 
 void LAN::Traverse::IncrementCallbackReplys()
 {
-	std::unique_lock<std::mutex> lck(mtx, std::defer_lock);
-	lck.lock();
+	std::lock_guard<std::mutex> lock(mtx);
 
+	lock;
 	++callbackReplys;
-
-	lck.unlock();
 }
 
 void LAN::Traverse::InsertAddressModelIntoMap(std::string ipAddress)
 {
-	std::unique_lock<std::mutex> lck(mtx, std::defer_lock);
-	lck.lock();
+	std::lock_guard<std::mutex> lock(mtx);
 
+	lock;
 	LAN::IpAddressesModel tmpIpAddreModel;
 	addressess.insert(std::pair<std::string, LAN::IpAddressesModel>(ipAddress, tmpIpAddreModel));
-
-	lck.unlock();
 }
 
 std::string LAN::Traverse::ParseMacAddrFromPIP_ADAPTER_ADDRESSES(PIP_ADAPTER_ADDRESSES pCurrAddresses)
