@@ -13,8 +13,8 @@ VOID NTAPI ReplyCame(PVOID context, PIO_STATUS_BLOCK pio, DWORD reserved)
 		pointerForCallbackFun->traverse->InsertAddressModelIntoMap(pointerForCallbackFun->ipAddress);
 	}
 
-	//CString str(pointerForCallbackFun->ipAddress.c_str());
-	//MessageBox(NULL, str, str, NULL);
+	CString str(pointerForCallbackFun->ipAddress.c_str());
+	MessageBox(NULL, str, str, NULL);
 
 	return;
 }
@@ -43,7 +43,7 @@ LAN::IpAddressesModel LAN::Traverse::GetAdaptersAddress()
 		if (pAddresses == NULL)
 		{
 			ipAddressModel.valid = false;
-			return ipAddressModel;
+			throw "GetAdaptersAddresses failed with error: Memory allocation failed for IP_ADAPTER_ADDRESSES struct";
 		}
 
 		dwRetVal = GetAdaptersAddresses(family, flags, NULL, pAddresses, &outBufLen);
@@ -69,29 +69,10 @@ LAN::IpAddressesModel LAN::Traverse::GetAdaptersAddress()
 			if (pCurrAddresses->OperStatus == IF_OPER_STATUS::IfOperStatusUp)
 			{
 				//Parsing MAC address
-				std::string mac_str;
-				std::stringstream ss;
-				if (pCurrAddresses->PhysicalAddressLength != 0)
-				{
-					for (int i = 0; i < (int)pCurrAddresses->PhysicalAddressLength; i++)
-					{
-						if (i == (pCurrAddresses->PhysicalAddressLength - 1))
-						{
-							ss << std::setfill('0') << std::setw(2) << std::hex << (int)pCurrAddresses->PhysicalAddress[i];
-						}
-						else
-						{
-							ss << std::setfill('0') << std::setw(2) << std::hex << (int)pCurrAddresses->PhysicalAddress[i];
-							ss << "-";
-						}
-					}
-					mac_str = ss.str();
-				}
+				std::string mac_str = ParseMacAddrFromPIP_ADAPTER_ADDRESSES(pCurrAddresses);
 
-
-				//Parsing IP address and subnet mask
+				//Parsing Subnet info and Ip address
 				std::string ip_str;
-				PULONG mask = &outBufLen;
 				unsigned long net_mask;
 				pUnicast = pCurrAddresses->FirstUnicastAddress;
 				short mask_bits_length = pUnicast->OnLinkPrefixLength;
@@ -99,32 +80,13 @@ LAN::IpAddressesModel LAN::Traverse::GetAdaptersAddress()
 				{
 					for (int i = 0; pUnicast != NULL; i++)
 					{
-						ConvertLengthToIpv4Mask(pUnicast->OnLinkPrefixLength, mask);
-
-						if (mask_bits_length >= 24 && mask_bits_length <= 32)
-						{
-							std::string binary = std::bitset<32>(*mask).to_string();
-							net_mask = std::bitset<8>(binary.substr(0, 8)).to_ulong();
-						}
-						else if (mask_bits_length >= 16 && mask_bits_length <= 23)
-						{
-							std::string binary = std::bitset<24>(*mask).to_string();
-							net_mask = std::bitset<8>(binary.substr(0, 8)).to_ulong();
-						}
-						else if (mask_bits_length >= 8 && mask_bits_length <= 15)
-						{
-							std::string binary = std::bitset<16>(*mask).to_string();
-							net_mask = std::bitset<8>(binary.substr(0, 8)).to_ulong();
-						}
-
-						struct sockaddr_in  *sockaddr_ipv4;
-						sockaddr_ipv4 = (struct sockaddr_in *)pUnicast->Address.lpSockaddr;
-						ip_str = inet_ntoa(sockaddr_ipv4->sin_addr);
-
+						net_mask = ParseSubnetInfoFromPIP_ADAPTER_UNICAST_ADDRESS(pUnicast);
+						ip_str = ParseIpAddrFromPIP_ADAPTER_UNICAST_ADDRESS(pUnicast);
 						pUnicast = pUnicast->Next;
 					}
 				}
 
+				//Fill IpAddressesModel with this pc info 
 				if (pCurrAddresses->FirstDnsServerAddress && pCurrAddresses->FirstGatewayAddress)
 				{
 					ipAddressModel.macAddress = mac_str;
@@ -139,27 +101,11 @@ LAN::IpAddressesModel LAN::Traverse::GetAdaptersAddress()
 	}
 	else
 	{
-		if (dwRetVal == ERROR_NO_DATA)
-		{
-			ipAddressModel.valid = false;
-			return ipAddressModel;
-		}
-		else {
+		if (pAddresses)
+			FREE(pAddresses);
 
-			if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER |
-				FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
-				NULL, dwRetVal, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-				// Default language
-				(LPTSTR)& lpMsgBuf, 0, NULL))
-			{
-				LocalFree(lpMsgBuf);
-				if (pAddresses)
-					FREE(pAddresses);
-
-				ipAddressModel.valid = false;
-				return ipAddressModel;
-			}
-		}
+		ipAddressModel.valid = false;
+		throw "Call to GetAdaptersAddresses failed with error: No addresses were found for this machine";
 	}
 
 	if (pAddresses)
@@ -194,10 +140,7 @@ void LAN::Traverse::SendICMP(GlobalVariableHolder* pointerForCallbackMethod, std
 	DWORD dwRetVal = IcmpSendEcho2(hIcmpFile, 0, ReplyCame, pointerForCallbackMethod, ipaddr,
 		data, strlen(data), NULL, ReplyBuffer, (sizeof(ICMP_ECHO_REPLY) * 1000) + 8, 1000);
 
-	//if (dwRetVal == ERROR_IO_PENDING)
-	//{
-	//	return;
-	//}
+	free(ReplyBuffer);
 }
 
 void LAN::Traverse::ResolveHostname(const std::string& ipAddress)
@@ -328,6 +271,68 @@ void LAN::Traverse::InsertAddressModelIntoMap(std::string ipAddress)
 	lck.unlock();
 }
 
+std::string LAN::Traverse::ParseMacAddrFromPIP_ADAPTER_ADDRESSES(PIP_ADAPTER_ADDRESSES pCurrAddresses)
+{
+	std::string mac_str;
+	std::stringstream ss;
+	if (pCurrAddresses->PhysicalAddressLength != 0)
+	{
+		for (int i = 0; i < (int)pCurrAddresses->PhysicalAddressLength; i++)
+		{
+			if (i == (pCurrAddresses->PhysicalAddressLength - 1))
+			{
+				ss << std::setfill('0') << std::setw(2) << std::hex << (int)pCurrAddresses->PhysicalAddress[i];
+			}
+			else
+			{
+				ss << std::setfill('0') << std::setw(2) << std::hex << (int)pCurrAddresses->PhysicalAddress[i];
+				ss << "-";
+			}
+		}
+		mac_str = ss.str();
+	}
+	
+	return mac_str;
+}
+
+unsigned long LAN::Traverse::ParseSubnetInfoFromPIP_ADAPTER_UNICAST_ADDRESS(PIP_ADAPTER_UNICAST_ADDRESS pUnicast)
+{
+	ULONG outBufLen = WORKING_BUFFER_SIZE;
+	PULONG mask = &outBufLen;
+	std::string ip_str;
+	unsigned long net_mask;
+	short mask_bits_length = pUnicast->OnLinkPrefixLength;
+
+	ConvertLengthToIpv4Mask(pUnicast->OnLinkPrefixLength, mask);
+
+	if (mask_bits_length >= 24 && mask_bits_length <= 32)
+	{
+		std::string binary = std::bitset<32>(*mask).to_string();
+		net_mask = std::bitset<8>(binary.substr(0, 8)).to_ulong();
+	}
+	else if (mask_bits_length >= 16 && mask_bits_length <= 23)
+	{
+		std::string binary = std::bitset<24>(*mask).to_string();
+		net_mask = std::bitset<8>(binary.substr(0, 8)).to_ulong();
+	}
+	else if (mask_bits_length >= 8 && mask_bits_length <= 15)
+	{
+		std::string binary = std::bitset<16>(*mask).to_string();
+		net_mask = std::bitset<8>(binary.substr(0, 8)).to_ulong();
+	}
+
+	return net_mask;
+}
+
+std::string LAN::Traverse::ParseIpAddrFromPIP_ADAPTER_UNICAST_ADDRESS(PIP_ADAPTER_UNICAST_ADDRESS pUnicast)
+{
+	std::string ip_str;
+	struct sockaddr_in  *sockaddr_ipv4;
+	sockaddr_ipv4 = (struct sockaddr_in *)pUnicast->Address.lpSockaddr;
+	ip_str = inet_ntoa(sockaddr_ipv4->sin_addr);
+
+	return ip_str;
+}
 
 ///////////////////////////////////////////////////////////////////////////////////
 //Class for getting this pc LAN info
@@ -341,17 +346,25 @@ public:
 		LAN::GlobalVariableHolder pointerForCallbackMethod;
 		LAN::IpAddressesModel ipAddressModel;
 
-		ipAddressModel = LAN::Traverse::GetAdaptersAddress();
+		try
+		{
+			ipAddressModel = LAN::Traverse::GetAdaptersAddress();
 
-		pointerForCallbackMethod.ipAddress = ipAddressModel.ipAddress;
-		pointerForCallbackMethod.traverse = this;
+			pointerForCallbackMethod.ipAddress = ipAddressModel.ipAddress;
+			pointerForCallbackMethod.traverse = this;
 
-		LAN::Traverse::SendICMP(&pointerForCallbackMethod, ipAddressModel.ipAddress);
-		SleepEx(1100, true);
+			LAN::Traverse::SendICMP(&pointerForCallbackMethod, ipAddressModel.ipAddress);
+			SleepEx(1100, true);
 
-		LAN::Traverse::ResolveHostname(ipAddressModel.ipAddress);
-		LAN::Traverse::SendArp(ipAddressModel.ipAddress);
-		addressess[ipAddressModel.ipAddress].ipAddress = ipAddressModel.ipAddress;
+			LAN::Traverse::ResolveHostname(ipAddressModel.ipAddress);
+			LAN::Traverse::SendArp(ipAddressModel.ipAddress);
+			addressess[ipAddressModel.ipAddress].ipAddress = ipAddressModel.ipAddress;
+		}
+		catch (const char* e)
+		{
+			MessageBoxA(NULL, (LPCSTR)e, (LPCSTR)e, MB_OK);
+		}
+
 
 		return addressess;
 	}
