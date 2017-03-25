@@ -125,17 +125,16 @@ void LAN::Traverse::SendICMP(GlobalVariableHolder* pointerForCallbackMethod, std
 	DWORD ReplySize = 0;
 	std::stringstream ss;
 
+	if (ReplyBuffer == NULL)
+		throw "SendICMP: Unable to allocate memory for reply buffer.";
+
 	ipaddr = inet_addr(ipAddress.c_str());
 	if (ipaddr == INADDR_NONE)
-	{
-		return;
-	}
+		throw "SendICMP: Invalind IP address.";
 
 	hIcmpFile = IcmpCreateFile();
 	if (hIcmpFile == INVALID_HANDLE_VALUE)
-	{
-		return;
-	}
+		throw "SendICMP: Unable to open handle.";
 
 	DWORD dwRetVal = IcmpSendEcho2(hIcmpFile, 0, ReplyCame, pointerForCallbackMethod, ipaddr,
 		data, strlen(data), NULL, ReplyBuffer, (sizeof(ICMP_ECHO_REPLY) * 1000) + 8, 1000);
@@ -145,7 +144,6 @@ void LAN::Traverse::SendICMP(GlobalVariableHolder* pointerForCallbackMethod, std
 
 void LAN::Traverse::ResolveHostname(const std::string& ipAddress)
 {
-	// Declare and initialize variables
 	WSADATA wsaData = { 0 };
 	int iResult = 0;
 
@@ -156,26 +154,19 @@ void LAN::Traverse::ResolveHostname(const std::string& ipAddress)
 	char servInfo[NI_MAXSERV];
 	u_short port = 27015;
 
-	// Initialize Winsock
 	iResult = WSAStartup(MAKEWORD(2, 2), &wsaData);
 
 	if (iResult != 0)
-	{
-		std::cout << "WSAStartup failed: %d\n" << iResult;
-	}
+		throw "ResolveHostname: WSAStartup failed to initialize.";
 
-
-	// Set up sockaddr_in structure which is passed
-	// to the getnameinfo function
 	saGNI.sin_family = AF_INET;
 	saGNI.sin_addr.s_addr = inet_addr(ipAddress.c_str());
 	saGNI.sin_port = htons(port);
 
-	// Call getnameinfo
 	dwRetval = getnameinfo((struct sockaddr *) &saGNI, sizeof(struct sockaddr), hostname, NI_MAXHOST, servInfo, NI_MAXSERV, NI_NUMERICSERV);
 
 	if (dwRetval != 0)
-		addressess[ipAddress].hostName = "Couldn't resolve hostname.";
+		throw "ResolveHostname: ResolveHostname failed.";
 
 	addressess[ipAddress].hostName = hostname;
 }
@@ -184,8 +175,8 @@ void LAN::Traverse::SendArp(const std::string& str_ip)
 {
 	DWORD dwRetVal;
 	IPAddr DestIp = 0;
-	ULONG MacAddr[2];       /* for 6-byte hardware addresses */
-	ULONG PhysAddrLen = 6;  /* default to length of six bytes */
+	ULONG MacAddr[2];   
+	ULONG PhysAddrLen = 6; 
 	std::stringstream ss;
 
 	BYTE *bPhysAddr;
@@ -215,7 +206,10 @@ void LAN::Traverse::SendArp(const std::string& str_ip)
 			}
 		}
 		else
+		{
 			ss << "Warning: SendArp completed successfully, but returned length=0";
+			throw ss.str().c_str();
+		}
 	}
 	else
 	{
@@ -244,10 +238,11 @@ void LAN::Traverse::SendArp(const std::string& str_ip)
 		default:
 			break;
 		}
+
+		throw ss.str().c_str();
 	}
 
 	addressess[str_ip].macAddress = ss.str();
-	return /*ss.str()*/;
 }
 
 void LAN::Traverse::IncrementCallbackReplys()
