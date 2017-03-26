@@ -244,24 +244,17 @@ void LAN::Traverse::SendArp(const std::string& str_ip)
 
 void LAN::Traverse::IncrementCallbackReplys()
 {
-	//std::lock_guard<std::mutex> lock(mtx);
-
-	//lock;
-	mtx.lock();
+	std::lock_guard<std::mutex> lock(mtx);
+	lock;
 	++callbackReplys;
-	mtx.unlock();
 }
 
 void LAN::Traverse::InsertAddressModelIntoMap(std::string ipAddress)
 {
-	//std::lock_guard<std::mutex> lock(mtx);
-
-	//lock;
-	mtx.lock();
-
+	std::lock_guard<std::mutex> lock(mtx);
+	lock;
 	LAN::IpAddressesModel tmpIpAddreModel;
 	addressess.insert(std::pair<std::string, LAN::IpAddressesModel>(ipAddress, tmpIpAddreModel));
-	mtx.unlock();
 
 }
 
