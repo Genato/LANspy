@@ -97,7 +97,7 @@ bool ViewModelLogic::GetTraverseResult(CListCtrl& listCtrlView)
 		{
 			int n = listCtrlView.GetItemCount();
 
-			listCtrlView.InsertItem(n, ToCString(it->second.ipAddress));
+			listCtrlView.InsertItem(n, ToCString(it->first));
 			listCtrlView.SetItemText(n, 1, ToCString(it->second.hostName));
 			listCtrlView.SetItemText(n, 2, ToCString(it->second.macAddress));
 		}

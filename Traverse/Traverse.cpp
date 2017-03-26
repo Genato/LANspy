@@ -1,20 +1,18 @@
 #include "..\LANspy\stdafx.h"
 #include "Traverse.h"
 
+
 //Callback method for async call of SendICMP() --> IcmpSendEcho2()
 VOID NTAPI ReplyCame(PVOID context, PIO_STATUS_BLOCK pio, DWORD reserved)
 {
 	LAN::GlobalVariableHolder* pointerForCallbackFun = (LAN::GlobalVariableHolder*)context;
-
-	pointerForCallbackFun->traverse->IncrementCallbackReplys();
 
 	if (pio->Status == 0)
 	{
 		pointerForCallbackFun->traverse->InsertAddressModelIntoMap(pointerForCallbackFun->ipAddress);
 	}
 
-	CString str(pointerForCallbackFun->ipAddress.c_str());
-	MessageBox(NULL, str, str, NULL);
+	pointerForCallbackFun->traverse->IncrementCallbackReplys();
 
 	return;
 }
@@ -120,10 +118,9 @@ void LAN::Traverse::SendICMP(GlobalVariableHolder* pointerForCallbackMethod, std
 {
 	HANDLE hIcmpFile;
 	unsigned long ipaddr = INADDR_NONE;
-	char * data = "hi all";
-	char * ReplyBuffer = (char*)malloc(sizeof(ICMP_ECHO_REPLY) * 1000 + 8);
-	DWORD ReplySize = 0;
-	std::stringstream ss;
+	char data[] = "";
+	DWORD ReplySize = sizeof(ICMP_ECHO_REPLY) + sizeof(data) + 1;
+	LPVOID ReplyBuffer = (VOID *)malloc(ReplySize);
 
 	if (ReplyBuffer == NULL)
 		throw "SendICMP: Unable to allocate memory for reply buffer.";
@@ -137,7 +134,7 @@ void LAN::Traverse::SendICMP(GlobalVariableHolder* pointerForCallbackMethod, std
 		throw "SendICMP: Unable to open handle.";
 
 	DWORD dwRetVal = IcmpSendEcho2(hIcmpFile, 0, ReplyCame, pointerForCallbackMethod, ipaddr,
-		data, strlen(data), NULL, ReplyBuffer, (sizeof(ICMP_ECHO_REPLY) * 1000) + 8, 1000);
+		data, strlen(data), NULL, ReplyBuffer, ReplySize, 10000);
 
 	free(ReplyBuffer);
 }
@@ -247,19 +244,25 @@ void LAN::Traverse::SendArp(const std::string& str_ip)
 
 void LAN::Traverse::IncrementCallbackReplys()
 {
-	std::lock_guard<std::mutex> lock(mtx);
+	//std::lock_guard<std::mutex> lock(mtx);
 
-	lock;
+	//lock;
+	mtx.lock();
 	++callbackReplys;
+	mtx.unlock();
 }
 
 void LAN::Traverse::InsertAddressModelIntoMap(std::string ipAddress)
 {
-	std::lock_guard<std::mutex> lock(mtx);
+	//std::lock_guard<std::mutex> lock(mtx);
 
-	lock;
+	//lock;
+	mtx.lock();
+
 	LAN::IpAddressesModel tmpIpAddreModel;
 	addressess.insert(std::pair<std::string, LAN::IpAddressesModel>(ipAddress, tmpIpAddreModel));
+	mtx.unlock();
+
 }
 
 std::string LAN::Traverse::ParseMacAddrFromPIP_ADAPTER_ADDRESSES(PIP_ADAPTER_ADDRESSES pCurrAddresses)
@@ -342,10 +345,11 @@ public:
 			ipAddressModel = LAN::Traverse::GetAdaptersAddress();
 
 			pointerForCallbackMethod.ipAddress = ipAddressModel.ipAddress;
-			pointerForCallbackMethod.traverse = this;
+			pointerForCallbackMethod.traverse = traverse;
 
-			LAN::Traverse::SendICMP(&pointerForCallbackMethod, ipAddressModel.ipAddress);
-			SleepEx(1100, true);
+			//LAN::Traverse::SendICMP(&pointerForCallbackMethod, ipAddressModel.ipAddress);
+			LAN::Traverse::SendICMP(&pointerForCallbackMethod, "192.168.5.150");
+			SleepEx(INFINITE, true);
 
 			LAN::Traverse::ResolveHostname(ipAddressModel.ipAddress);
 			LAN::Traverse::SendArp(ipAddressModel.ipAddress);
@@ -367,6 +371,155 @@ public:
 class ThisPcSubnet : public LAN::Traverse
 {
 public:
+	virtual std::map<std::string, LAN::IpAddressesModel> Search(LAN::Traverse* traverse) override
+	{
+		LAN::IpAddressesModel ipAddressModel;
+		std::string tmp_str_ip;
+
+		try
+		{
+			ipAddressModel = LAN::Traverse::GetAdaptersAddress();
+
+			SetSubnetIpRange(ipAddressModel.subnetMaskBitsLength, ipAddressModel.subnetMask, ipAddressModel.ipAddress);
+			std::vector<LAN::GlobalVariableHolder> pointerForCallbackMethod(CalculateNumOfIpAddr() + 1);
+
+			for (; start_B <= end_B; ++start_B)
+			{
+				start_C = 0;
+				int cnt = 0;
+				if (start_B == end_B) //class C subnet mask
+				{
+					for (; start_C < end_C; ++start_C)
+					{
+						pointerForCallbackMethod[start_C].ipAddress = concat_address(start_B, start_C);
+						pointerForCallbackMethod[start_C].traverse = this;
+						LAN::Traverse::SendICMP(&pointerForCallbackMethod[start_C], pointerForCallbackMethod[start_C].ipAddress);
+						++cnt;
+					}
+				}
+				else if (start_B < end_B) //class B subnet mask --> STILL NOT SHURE DOES IT WORK, NEED TO TEST ON LAN WITH B SUBNET
+				{
+					for (; start_C < 255; ++start_C)
+					{
+						pointerForCallbackMethod[start_C].ipAddress = concat_address(start_B, start_C);
+						pointerForCallbackMethod[start_C].traverse = this;
+						LAN::Traverse::SendICMP(&pointerForCallbackMethod[start_C], pointerForCallbackMethod[start_C].ipAddress);
+						++cnt;
+					}
+				}
+				else if (1) // class A subnet mask --> WILL IMPLEMENT NEXT WEEK
+				{
+					//.....
+				}
+
+				//Putting current thread in alertable state
+				while (cnt != callbackReplys)
+				{
+					SleepEx(INFINITE, true);
+				}
+			}
+
+			//Resolving hostname and mac address
+			ThreadPool thPool(addressess.size() * 2);
+			for (std::map<std::string, LAN::IpAddressesModel>::iterator it = addressess.begin(); it != addressess.end(); ++it)
+			{
+				thPool.enqueue( [=] { LAN::Traverse::ResolveHostname(it->first); });
+				thPool.enqueue([=] { LAN::Traverse::SendArp(it->first); });
+			}
+			thPool.~ThreadPool();
+		}
+		catch (const char* e)
+		{
+			MessageBoxA(NULL, (LPCSTR)e, (LPCSTR)e, MB_OK);
+		}
+
+		return addressess;
+	}
+
+private:
+
+	void SetSubnetIpRange(short mask_bits_length, unsigned long net_mask, std::string ip_str)
+	{
+		int base_num = 256 - net_mask;
+		int class_b_num;
+		int class_c_num;
+
+		class_c_num = std::stoi(ip_str.substr(ip_str.find_last_of(".") + 1));
+		ip_str.erase(ip_str.find_last_of("."));
+		class_b_num = std::stoi(ip_str.substr(ip_str.find_last_of(".") + 1));
+		ip_str.erase(ip_str.find_last_of(".") + 1);
+
+		if (mask_bits_length >= 8 && mask_bits_length <= 15) //class A subnet mask
+		{
+
+		}
+		else if (mask_bits_length >= 16 && mask_bits_length <= 23) //class B subnet mask
+		{
+			for (int i = 0; base_num <= class_b_num; i += base_num)
+			{
+				if ((i + base_num) == class_b_num)
+				{
+					start_B = i;
+					end_B = start_B + base_num - 1;
+					start_C = 0;
+					end_C = 255;
+					start_ip_adr = ip_str;
+					return;
+				}
+				else if ((i + base_num) > class_b_num)
+				{
+					start_B = i;
+					end_B = i + base_num - 1;
+					start_C = 0;
+					end_C = 255;
+					start_ip_adr = ip_str;
+					return;
+				}
+			}
+		}
+		else if (mask_bits_length >= 24 && mask_bits_length <= 32) //class C subnet mask
+		{
+			for (int i = 0; i <= class_c_num; i += base_num)
+			{
+				if ((i + base_num) == class_b_num)
+				{
+					start_B = class_b_num;
+					end_B = class_b_num;
+					start_C = i;
+					end_C = start_B + base_num - 1;
+					start_ip_adr = ip_str;
+					return;
+				}
+				else if ((i + base_num) > class_b_num)
+				{
+					start_B = class_b_num;
+					end_B = class_b_num;
+					start_C = i;
+					end_C = base_num - 1;
+					start_ip_adr = ip_str;
+					return;
+				}
+			}
+		}
+	}
+
+	std::string concat_address(int i, int j)
+	{
+		std::stringstream ss;
+		ss << start_ip_adr << i << "." << j;
+
+		return ss.str();
+	}
+
+	int CalculateNumOfIpAddr()
+	{
+		return end_B == start_B ? 255 : (255 * (end_B - start_B));
+	}
+
+	//Members
+
+	std::string start_ip_adr, end_ip_adr;
+	int start_B, start_C, end_B, end_C;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////

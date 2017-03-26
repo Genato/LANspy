@@ -6,6 +6,7 @@ LANspy/Debug/
 LANspy/x64/
 LANspy/*.aps
 ipch/
+Release/
 x64/
 *.opendb
 *.cd
