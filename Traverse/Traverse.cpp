@@ -448,7 +448,7 @@ private:
 		}
 		else if (mask_bits_length >= 16 && mask_bits_length <= 23) //class B subnet mask
 		{
-			for (int i = 0; base_num <= class_b_num; i += base_num)
+			for (int i = 0; i <= class_b_num; i += base_num)
 			{
 				if ((i + base_num) == class_b_num)
 				{
@@ -464,7 +464,7 @@ private:
 					start_B = i;
 					end_B = i + base_num - 1;
 					start_C = 0;
-					end_C = 255;
+					end_C = 255 - 1;
 					start_ip_adr = ip_str;
 					return;
 				}
