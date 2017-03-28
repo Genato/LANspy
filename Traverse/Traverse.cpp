@@ -134,7 +134,7 @@ void LAN::Traverse::SendICMP(GlobalVariableHolder* pointerForCallbackMethod, std
 		throw "SendICMP: Unable to open handle.";
 
 	DWORD dwRetVal = IcmpSendEcho2(hIcmpFile, 0, ReplyCame, pointerForCallbackMethod, ipaddr,
-		data, strlen(data), NULL, ReplyBuffer, ReplySize, 10000);
+		data, strlen(data), NULL, ReplyBuffer, ReplySize, 1000);
 
 	free(ReplyBuffer);
 }
@@ -374,12 +374,13 @@ public:
 			ipAddressModel = LAN::Traverse::GetAdaptersAddress();
 
 			SetSubnetIpRange(ipAddressModel.subnetMaskBitsLength, ipAddressModel.subnetMask, ipAddressModel.ipAddress);
-			std::vector<LAN::GlobalVariableHolder> pointerForCallbackMethod(CalculateNumOfIpAddr() + 1);
+			std::vector<LAN::GlobalVariableHolder> pointerForCallbackMethod((CalculateNumOfIpAddr() + 1) > 255 ? 255 : (CalculateNumOfIpAddr() + 1));
 
 			for (; start_B <= end_B; ++start_B)
 			{
 				start_C = 0;
 				int cnt = 0;
+				callbackReplys = 0;
 				if (start_B == end_B) //class C subnet mask
 				{
 					for (; start_C < end_C; ++start_C)
@@ -392,7 +393,7 @@ public:
 				}
 				else if (start_B < end_B) //class B subnet mask --> STILL NOT SHURE DOES IT WORK, NEED TO TEST ON LAN WITH B SUBNET
 				{
-					for (; start_C < 255; ++start_C)
+					for (; start_C <= end_C; ++start_C)
 					{
 						pointerForCallbackMethod[start_C].ipAddress = concat_address(start_B, start_C);
 						pointerForCallbackMethod[start_C].traverse = this;
@@ -406,7 +407,7 @@ public:
 				}
 
 				//Putting current thread in alertable state
-				while (cnt != callbackReplys)
+				while (cnt > callbackReplys)
 				{
 					SleepEx(INFINITE, true);
 				}
