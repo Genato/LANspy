@@ -93,19 +93,22 @@ BOOL CLANspyDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	RECT lpRect;
-	CString ipAddr, hostName, macAddr;
+	CString ipAddr, hostName, macAddr, SSID;
 
 	listCtrlView.GetWindowRect(&lpRect);
 
 	if (!ipAddr.LoadString(LISTCNTRLIPADDR))
 		ipAddr = "";
-	listCtrlView.InsertColumn(0, ipAddr, LVCFMT_LEFT, (lpRect.right - lpRect.left) / 3);
+	listCtrlView.InsertColumn(0, ipAddr, LVCFMT_LEFT, (lpRect.right - lpRect.left) / 4);
 	if (!hostName.LoadString(LISTCNTRLIHOSTNAME))
 		hostName = "";
-	listCtrlView.InsertColumn(1, hostName, LVCFMT_LEFT, (lpRect.right - lpRect.left) / 3);
+	listCtrlView.InsertColumn(1, hostName, LVCFMT_LEFT, (lpRect.right - lpRect.left) / 4);
 	if (!macAddr.LoadString(LISTCNTRLIPADDRMACADDR))
 		macAddr = "";
-	listCtrlView.InsertColumn(2, macAddr, LVCFMT_LEFT, ((lpRect.right - lpRect.left) / 3) - 5);
+	listCtrlView.InsertColumn(2, macAddr, LVCFMT_LEFT, ((lpRect.right - lpRect.left) / 4));
+	if (!SSID.LoadString(LISTCNTRLSSID))
+		SSID = "";
+	listCtrlView.InsertColumn(3, SSID, LVCFMT_LEFT, ((lpRect.right - lpRect.left) / 4));
 
 	CheckRadioButton(IDC_THISPCINFO, IDC_LOAD, IDC_THISPCINFO);
 

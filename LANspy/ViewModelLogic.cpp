@@ -24,6 +24,7 @@ void ViewModelLogic::Load(CListCtrl& listCtrlView)
 		listCtrlView.InsertItem(n, IPaddress->m_IPaddress);
 		listCtrlView.SetItemText(n, 1, IPaddress->m_Hostname);
 		listCtrlView.SetItemText(n, 2, IPaddress->m_MACaddress);
+		listCtrlView.SetItemText(n, 3, IPaddress->m_SSID);
 
 		IPaddress->MoveNext();
 	}
@@ -35,10 +36,21 @@ void ViewModelLogic::Save(CListCtrl& listCtrlView)
 {
 	if (!IPaddress->IsOpen())
 		IPaddress->Open(CRecordset::dynamic, NULL, CRecordset::dynaset);
-
+	
 	for (int i = 0; i < listCtrlView.GetItemCount(); ++i)
 	{
-		if (IPaddress->m_IPaddress != listCtrlView.GetItemText(i, 0))
+		int flag = 0;
+		while (!IPaddress->IsEOF())
+		{
+			if (IPaddress->m_IPaddress == listCtrlView.GetItemText(i, 0))
+				++flag;
+
+			IPaddress->MoveNext();
+		}
+
+		IPaddress->MoveFirst();
+
+		if (!flag)
 		{
 			if (IPaddress->CanAppend())
 			{
@@ -46,6 +58,7 @@ void ViewModelLogic::Save(CListCtrl& listCtrlView)
 				IPaddress->m_IPaddress = listCtrlView.GetItemText(i, 0);
 				IPaddress->m_Hostname = listCtrlView.GetItemText(i, 1);
 				IPaddress->m_MACaddress = listCtrlView.GetItemText(i, 2);
+				IPaddress->m_SSID = listCtrlView.GetItemText(i, 3);
 				IPaddress->Update();
 			}
 			else
@@ -60,8 +73,6 @@ void ViewModelLogic::Save(CListCtrl& listCtrlView)
 				listCtrlView.MessageBox(tmpStr2, tmpStr1, MB_ICONASTERISK);
 			}
 		}
-
-		IPaddress->MoveNext();
 	}
 
 	IPaddress->Close();
