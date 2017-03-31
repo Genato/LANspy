@@ -16,7 +16,8 @@ In order to setup project there is few steps you need to do before you could use
     (
     "IPaddress" varchar(50),
     "Hostname" varchar(100),
-    "MACaddress" varchar(100)
+    "MACaddress" varchar(100),
+    "SSID" varchar(50)
     );
     ~~~
     
