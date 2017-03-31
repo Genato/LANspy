@@ -499,10 +499,8 @@ private:
 
 	std::string concat_address(int i, int j)
 	{
-		std::stringstream ss;
-		ss << start_ip_adr << i << "." << j;
-
-		return ss.str();
+		std::string tmpStr = start_ip_adr + std::to_string(i) + "." + std::to_string(j);
+		return tmpStr;
 	}
 
 	int CalculateNumOfIpAddr()
