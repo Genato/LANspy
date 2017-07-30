@@ -25,6 +25,11 @@ In order to setup project there is few steps you need to do before you could use
 
 2. Create new Systen DSN in ODBC called **NWP** and configure it to connect to database you created in first step. 
 
+- u Control Panel-u dodajte ODBC data source (System DSN) koji pokazuje na tu bazu <br>
+- koristite "Data Sources (ODBC)" tool iz Control Panel \ Administrative Tools <br>
+- na 64-bitnim Windowsima koristite 32-bitnu verziju (c:\Windows\SysWOW64\odbcad32.exe) <br>
+- Napravite DSN name koji odgovara projektu, nazovite ga  **NWP** <br>
+
 <br>
 
 _...still in development._ <br>
